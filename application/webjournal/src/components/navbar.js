@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { UserAuth } from '../api/AuthContext';
-
-const navbarStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  listStyle: 'none',
-  padding: '20px',
-  backgroundColor: '#3a6139',
-};
-
-const navLinkStyle = {
-  textDecoration: 'none',
-  color: 'white', // Set text color to white
-};
-
-const navbarUlClassName = 'flex';
-const navbarLiClassName = 'p-2 cursor-pointer';
-const navbarLiFontSize = { fontSize: '20px' };
-
+import styles from '../app/styles/navrbar.module.css';
+import Image from 'next/image';
+import Navlogo from '../../public/icons/Navlogo.svg';
+import { useRouter } from 'next/navigation';
 const Navbar = () => {
-  const {user, logOut } = UserAuth();
+  const { user, logOut } = UserAuth();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -35,57 +21,69 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     try {
-      await logOut(); 
-      router.push("/");
+      await logOut();
+      router.push('/');
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
 
   return (
-    <div className="navbar" style={navbarStyle}>
-      <h1 style={navbarLiFontSize}>WebJournal</h1>
+    <nav className={styles.navbar}>
+      <div className={styles.titleContainer} onClick={() => router.push('/')}>
+        <Image src={Navlogo} alt="Nav Logo" className={styles.logo} />
+        <h1 className={styles.title}>MusicJournal</h1>
+      </div>
       {loading ? null : !user ? (
-        <ul className={navbarUlClassName}>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize}>
-          <Link href="/" style={navLinkStyle}>
-            Home 
-          </Link>
-        </li>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize}>
-            <Link href="/logIn" style={navLinkStyle}>
-              Login 
-            </Link>
-          </li>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize}>
-            <Link href="/signUp" style={navLinkStyle}>
-              Sign Up 
-            </Link>
-          </li>
-        </ul>
+        <div className={styles.navLinksContainer}>
+          <ul className={styles.navList}>
+            <li className={styles.navItem}>
+              <Link href="/" className={styles.navLink}>
+                Home
+              </Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/logIn" className={styles.navLink}>
+                Login
+              </Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/signUp" className={styles.navLink}>
+                Sign Up
+              </Link>
+            </li>
+          </ul>
+        </div>
       ) : (
-        <ul className={navbarUlClassName}>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize}>
-            <Link href="/createEntry" style={navLinkStyle}>
-              Create Entry 
-            </Link>
-          </li>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize}>
-            <Link href="/viewEntry" style={navLinkStyle}>
-              Entries 
-            </Link>
-          </li>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize} onClick={handleSignOut}>
-            Sign out
-          </li>
-          <li className={`${navbarLiClassName}`} style={navbarLiFontSize}>
-            <Link href="/createPlayList" style={navLinkStyle}>
-              Create PlayList
-            </Link>
-          </li>
-        </ul>
+        <div className={styles.navLinksContainer}>
+          <ul className={styles.navList}>
+            <li className={styles.navItem}>
+              <Link href="/" className={styles.navLink}>
+                Home
+              </Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/createEntry" className={styles.navLink}>
+                Create Entry
+              </Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/viewEntry" className={styles.navLink}>
+                Entries
+              </Link>
+            </li>
+            <li className={styles.navItem} onClick={handleSignOut}>
+              Sign out
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/createPlayList" className={styles.navLink}>
+                Create PlayList
+              </Link>
+            </li>
+          </ul>
+        </div>
       )}
-    </div>
+    </nav>
   );
 };
 

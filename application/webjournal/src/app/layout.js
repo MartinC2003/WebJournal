@@ -4,8 +4,29 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from '../components/navbar';
 import { AuthContextProvider } from "../api/AuthContext";
+import localFont from "next/font/local";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const PlanetKosmos = localFont({
+  src: [
+    {
+      path: '../../public/fonts/PlanetKosmos.ttf',
+      weight: '400'
+    }
+  ],
+  variable: '--font-planetkosmos'
+});
+
+const Ethnocentric = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Ethnocentric.ttf',
+      weight: '400'
+    }
+  ],
+  variable: '--font-ethnocentric'
+});
 
 const metadata = {
   title: "Create Next App",
@@ -14,7 +35,7 @@ const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${PlanetKosmos.variable} ${Ethnocentric.variable} font-sans`}>
       <head>
         <link rel="stylesheet" href={inter.href} />
         <title>{metadata.title}</title>
@@ -22,9 +43,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthContextProvider>
-=            <Navbar />
-            {children}
-=        </AuthContextProvider>
+          <Navbar />
+          {children}
+        </AuthContextProvider>
       </body>
     </html>
   );

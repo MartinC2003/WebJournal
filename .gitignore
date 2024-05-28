@@ -1,3 +1,6 @@
 
 application/server/credentials/webjournal-f20ab-firebase-adminsdk-b6jty-1a364b0b08.json
 application/server/node_modules
+application/server 
+application/webjournal/node_modules
+/application/node_modules

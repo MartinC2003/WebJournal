@@ -17,14 +17,11 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #EFC2E2; /* Set your desired background color here */
+  margin: 0; /* Reset default margin */
+  padding: 0; /* Reset default padding */
 }
+
 
 @layer utilities {
   .text-balance {
