@@ -6,7 +6,6 @@ import React, { useState, useEffect } from "react";
 
 const gridContainerStyle = {
   display: 'grid',
-  backgroundColor: '#ebdfbc',
   gridTemplateColumns: 'repeat(5, 1fr)',
   gridTemplateRows: 'repeat(3, 1fr)',
   padding: '50px',

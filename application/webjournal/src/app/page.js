@@ -9,14 +9,10 @@ export default function Home() {
   
   const { user } = UserAuth();
   const router = useRouter();
+
   const handleSignUp = () => {
     router.push('/signUp');  
   };
-
-  const handleLogin = () => {
-    router.push('/logIn');  
-  };
-
 
   useEffect(() => {
     console.log("User:", user);

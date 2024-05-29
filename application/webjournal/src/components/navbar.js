@@ -69,7 +69,7 @@ const Navbar = () => {
             </li>
             <li className={styles.navItem}>
               <Link href="/viewEntry" className={styles.navLink}>
-                Entries
+                View Entries
               </Link>
             </li>
             <li className={styles.navItem}>
