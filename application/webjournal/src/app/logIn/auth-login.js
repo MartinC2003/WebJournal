@@ -1,7 +1,8 @@
-
 import { useState } from 'react';
 import { UserAuth } from '../../api/AuthContext';
 import { useRouter } from 'next/navigation';  
+import { Input } from '@mui/material';
+import styles from '../styles/login.module.css';
 
 export const AuthLogin = () => {
   const { onLogin } = UserAuth();  
@@ -19,35 +20,38 @@ export const AuthLogin = () => {
       window.alert(`Login failed: ${error.message}`);
     }
   };
+
   const inputStyle = {
-    color: 'black',
+    color: 'white',
     padding: '8px',
     marginBottom: '10px',
-    width: '200px', 
+    width: '244px',
+    borderRadius: '50px',  
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '20vh' }}>
+    <div style={{ textAlign: 'center' }}>
       <form onSubmit={handleSubmit}>
-        <input
-          style={inputStyle}
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <br />
-        <input
-          style={inputStyle}
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
+      <div className={styles.authInput}>
+          <Input
+            sx={inputStyle}  
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+            <Input
+            sx={inputStyle}  
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
         <button
+          className={styles.button}
           type="submit"
-          style={{ padding: '10px 15px', cursor: 'pointer' }}
+          style={{ cursor: 'pointer', borderRadius: '50px' }}
         >
           Login
         </button>

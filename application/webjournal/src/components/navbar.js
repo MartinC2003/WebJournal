@@ -72,13 +72,13 @@ const Navbar = () => {
                 Entries
               </Link>
             </li>
-            <li className={styles.navItem} onClick={handleSignOut}>
-              Sign out
-            </li>
             <li className={styles.navItem}>
               <Link href="/createPlayList" className={styles.navLink}>
                 Create PlayList
               </Link>
+            </li>
+            <li className={styles.navItem} onClick={handleSignOut}>
+              Sign out
             </li>
           </ul>
         </div>
