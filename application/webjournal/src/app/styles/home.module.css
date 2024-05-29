@@ -1,0 +1,77 @@
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.welcomeContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin:auto
+}
+
+.imageContainer {
+  flex: 1;
+  padding: 20px;
+}
+
+.image {
+  width: 100vh;  
+  height: auto;
+  border-radius: 50px;
+}
+
+.descriptionText {
+  font-size: 36px;
+  color: #603892; 
+  font-family: var(--font-nullshock); 
+  margin-top: 5%;
+}
+
+.AboutContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 70vh;
+  background-color: rgba(96, 56, 146, 0.7); 
+  align-items: flex-start; 
+  padding: 20px;
+  border-top-left-radius: 100px; 
+  border-top-right-radius: 29px; 
+  border-bottom-left-radius: 29px; 
+  border-bottom-right-radius: 100px; 
+  margin: 20px;
+  padding: 20px;
+  overflow: hidden; 
+}
+
+.AboutTitle {
+  font-size: 36px;
+  color: white; 
+  margin: 5%;
+  font-family: var(--font-nullshock); 
+}
+
+.AboutContent {
+  color: white; 
+  font-size: 20px;
+  margin-left: 5%; 
+  margin-right: 5%; 
+  font-family: var(--font-tahoma); 
+}
+
+.button {
+  padding: 10px 20px;
+  margin-left: 5%;
+  margin-right: 5%;  
+  width: 345px; 
+  height: 71px; 
+  font-size: 20px;
+  color: white;
+  background-color: #9994D0;
+  border-radius: 50px; 
+  font-family: var(--font-nullshock); 
+}

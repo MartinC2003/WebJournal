@@ -15,6 +15,11 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
 
 body {
   background-color: #EFC2E2; /* Set your desired background color here */
@@ -22,6 +27,40 @@ body {
   padding: 0; /* Reset default padding */
 }
 
+.video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1; /* Ensure it stays behind the content */
+}
+
+video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 174, 223, 0.5); /* 50% tint of #FFAEDF */
+  z-index: 2;
+}
+
+.content {
+  position: relative;
+  z-index: 3;
+}
 
 @layer utilities {
   .text-balance {
