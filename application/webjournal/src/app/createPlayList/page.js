@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/api/firebase';
+import { useEffect, useState } from 'react';
+
 function CreatePlaylistHome() {
     const [message, setMessage] = useState("Loading");
     const [user, setUser] = useState(null);

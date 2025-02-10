@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../../api/firebase';
-import { UserAuth } from '../../api/AuthContext';
+import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { UserAuth } from '../../api/AuthContext';
+import { db } from '../../api/firebase';
 
 function NewEntry() {
   const { user } = UserAuth();
@@ -105,6 +105,13 @@ function NewEntry() {
                 <option value="Scared">Scared</option>
                 <option value="Annoyed">Annoyed</option>
               </select>
+            </div>
+            <div>
+              <textarea
+                name="text"
+                value={entry.track}
+                onChange={handleInput}
+              />
             </div>
           </div>
           <div className="mb-3">

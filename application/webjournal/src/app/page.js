@@ -1,9 +1,9 @@
 'use client'
-import React, { useEffect } from 'react';
 import { UserAuth } from '@/api/AuthContext';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import styles from '../app/styles/home.module.css';
-import Image from 'next/image'; 
 
 export default function Home() {
   

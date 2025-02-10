@@ -1,15 +1,16 @@
 'use client';
-import React from 'react';
 import { Inter } from "next/font/google";
-import Navbar from '@/components/navbar';
-import { AuthContextProvider } from '@/api/AuthContext';
 import localFont from "next/font/local";
+import { AuthContextProvider } from "../api/AuthContext";
+import Navbar from '../components/navbar';
+import "./globals.css";
+
 const inter = Inter({ subsets: ["latin"] });
 
 const PlanetKosmos = localFont({
   src: [
     {
-      path: '../../../public/fonts/PlanetKosmos.ttf',
+      path: '../../public/fonts/PlanetKosmos.ttf',
       weight: '400'
     }
   ],
@@ -19,7 +20,7 @@ const PlanetKosmos = localFont({
 const Ethnocentric = localFont({
   src: [
     {
-      path: '../../../public/fonts/Ethnocentric.ttf',
+      path: '../../public/fonts/Ethnocentric.ttf',
       weight: '400'
     }
   ],
@@ -29,7 +30,7 @@ const Ethnocentric = localFont({
 const Tahoma = localFont({
   src: [
     {
-      path: '../../../public/fonts/Tahoma.ttf',
+      path: '../../public/fonts/Tahoma.ttf',
       weight: '400'
     }
   ],
@@ -39,7 +40,7 @@ const Tahoma = localFont({
 const Nullshock = localFont({
   src: [
     {
-      path: '../../../public/fonts/Nullshock.ttf',
+      path: '../../public/fonts/Nullshock.ttf',
       weight: '400'
     }
   ],
@@ -49,7 +50,7 @@ const Nullshock = localFont({
 const Rangerforce = localFont({
   src: [
     {
-      path: '../../../public/fonts/Rangerforce.ttf',
+      path: '../../public/fonts/Rangerforce.ttf',
       weight: '400'
     }
   ],
@@ -72,6 +73,10 @@ export default function RootLayout({ children }) {
         <meta name="description" content={metadata.description} />
       </head>
       <body>
+        <div className="video-container">
+          <video src={require('../../public/login/loginbg.mp4')} autoPlay muted loop/>
+          <div className="video-overlay"></div>
+        </div>
         <AuthContextProvider>
           <Navbar />
           {children}
