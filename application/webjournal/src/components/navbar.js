@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { UserAuth } from '../api/AuthContext';
-import styles from '../app/styles/navrbar.module.css';
 import Image from 'next/image';
-import Navlogo from '../../public/icons/Navlogo.svg';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Navlogo from '../../public/icons/Navlogo.svg';
+import { UserAuth } from '../api/AuthContext';
+import styles from '../app/styles/navbar.module.css';
 const Navbar = () => {
   const { user, logOut } = UserAuth();
   const [loading, setLoading] = useState(true);

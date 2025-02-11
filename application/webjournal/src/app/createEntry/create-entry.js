@@ -1,21 +1,44 @@
 import { addDoc, collection } from 'firebase/firestore';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import CeIcon from '../../../public/icons/CeIcon.svg';
 import { UserAuth } from '../../api/AuthContext';
 import { db } from '../../api/firebase';
+import styles from '../styles/createentry.module.css';
 
 function NewEntry() {
+  const router = useRouter();
   const { user } = UserAuth();
   const [entry, setEntry] = useState({
     date: new Date().toISOString().slice(0, 10),
     title: '',
     mood: '',
     text: '',
+    tracks: [
+      { artist: '', trackTitle: '' }
+    ]
   });
-  const router = useRouter();
+
+  const handleTrackInput = (index, field, value) => {
+    const newTracks = [...entry.tracks];
+    newTracks[index][field] = value;
+    setEntry({ ...entry, tracks: newTracks });
+  };
+
+  const addTrack = () => {
+    setEntry({
+      ...entry,
+      tracks: [...entry.tracks, { artist: '', trackTitle: '' }]
+    });
+  };
+
+  const removeTrack = (index) => {
+    const newTracks = entry.tracks.filter((_, i) => i !== index);
+    setEntry({ ...entry, tracks: newTracks });
+  };
 
   const handleInput = (e) => {
-    e.persist();
     setEntry({ ...entry, [e.target.name]: e.target.value });
   };
 
@@ -26,124 +49,153 @@ function NewEntry() {
   const addEntry = async (e) => {
     e.preventDefault();
 
-    try {
-      if (entry.title !== '' && entry.mood !== '' && entry.text !== '') {
-        const collectionRef = collection(db, 'DairyEntries');
+    if (entry.title !== '' && entry.mood !== '' && entry.text !== '') {
+      const allTracksFilled = entry.tracks.every(track => track.artist !== '' && track.trackTitle !== '');
 
-        await addDoc(collection(db, 'DairyEntries'), {
-          date: new Date().toISOString().slice(0, 10),
-          title: entry.title.trim(),
-          mood: entry.mood.trim(),
-          text: entry.text.trim(),
-          userUid: user.uid,
-        });
+      if (allTracksFilled) {
+        try {
+          await addDoc(collection(db, 'DairyEntries'), {
+            date: new Date().toISOString().slice(0, 10),
+            title: entry.title.trim(),
+            mood: entry.mood.trim(),
+            text: entry.text.trim(),
+            userUid: user.uid,
+            tracks: entry.tracks,
+          });
 
-        setEntry({
-          date: new Date().toISOString().slice(0, 10),
-          title: '',
-          mood: '',
-          text: '',
-        });
+          setEntry({
+            date: new Date().toISOString().slice(0, 10),
+            title: '',
+            mood: '',
+            text: '',
+            tracks: [{ artist: '', trackTitle: '' }]
+          });
 
-        console.log('Entry successfully saved to Firestore!');
-        router.push('/viewEntry');
+          console.log('Entry successfully saved to Firestore!');
+          router.push('/viewEntry');
+        } catch (error) {
+          console.error('Error adding entry:', error);
+          window.alert(`Error adding entry: ${error.message}`);
+        }
       } else {
-        console.log('Please fill in all fields');
-        window.alert('Please fill in all fields');
+        window.alert('Please fill in all track details');
       }
-    } catch (error) {
-      console.error('Error adding entry:', error);
-      window.alert(`Error adding entry: ${error.message}`);
+    } else {
+      window.alert('Please fill in all fields');
     }
   };
 
   return (
-    <div
-      className="bg-cover bg-[url('/newjournalpg.gif')] bg-center bg-no-repeat h-screen"
-      style={{
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div className="card-body">
-        <form className="text-center" onSubmit={addEntry}>
-          <div className="row mb-3">
-            <div className="col">
-              <input
-                placeholder="Title"
-                type="text"
-                name="title"
-                value={entry.title}
-                onChange={handleInput}
-                className="form-control"
-                style={{
-                  color: 'white',
-                  border: 'none',
-                  borderBottom: '2px solid white',
-                  background: 'transparent',
-                  outline: 'none',
-                  marginBottom: '10px',
-                }}
+    <div className={styles.app}>
+      <div className={styles.pagecontentContainer}>
+        <div className={styles.titleContainer}>
+              <Image
+                src="/createentry/createentry-title.png"
+                className={styles.titleImage}
+                width={1188}
+                height={211}
+                alt="Entry Title"
+              />
+        </div>
+        <div className={styles.createentryContainer}>
+          <form onSubmit={addEntry}>
+          <div className={styles.flexContainer}>
+            <div className={styles.imageContainer}>
+              <Image
+                src="/createentry/createentryimg-plc.png"
+                className={styles.image}
+                width={544}
+                height={809}
+                alt="Entry Placeholder"
               />
             </div>
-            <div className="col">
-              <select
-                name="mood"
-                value={entry.mood}
-                onChange={handleMoodSelect}
-                className="form-control"
-                style={{ color: 'black' }}
-              >
-                <option value="">Im feeling very...</option>
-                <option value="Happy">Happy</option>
-                <option value="Sad">Sad</option>
-                <option value="Angry">Angry</option>
-                <option value="Bored">Bored</option>
-                <option value="Neutral">Neutral</option>
-                <option value="Scared">Scared</option>
-                <option value="Annoyed">Annoyed</option>
-              </select>
+            <div className={styles.formContainer}>
+                <div className={styles.headingsContainer}>
+                  <Image src={CeIcon} className={styles.icon} />
+                  <h1 className={styles.headings}>Title</h1>
+                </div>
+                <input
+                  placeholder="Title"
+                  type="text"
+                  name="title"
+                  value={entry.title}
+                  onChange={handleInput}
+                  className={styles.input}
+                />
+                <div className={styles.headingsContainer}>
+                  <Image src={CeIcon} className={styles.icon} />
+                  <h1 className={styles.headings}>Mood</h1>
+                </div>
+                <select name="mood" value={entry.mood} onChange={handleMoodSelect} className={styles.select}>
+                  <option value="">I'm feeling very...</option>
+                  <option value="Happy">Happy</option>
+                  <option value="Sad">Sad</option>
+                  <option value="Angry">Angry</option>
+                  <option value="Scared">Scared</option>
+                  <option value="Disgusted">Disgusted</option>
+                </select>
             </div>
-            <div>
-              <textarea
-                name="text"
-                value={entry.track}
-                onChange={handleInput}
-              />
             </div>
-          </div>
-          <div className="mb-3">
-            <textarea
-              name="text"
-              value={entry.text}
-              onChange={handleInput}
-              className="form-control"
-              rows="8"
-              style={{
-                width: '500px',
-                height: '300px',
-                color: 'black',
-                padding: '20px',
-              }}
-              placeholder="And I wanna talk about how..."
-            />
-          </div>
-          <div className="mb-3">
-            <button
-              type="submit"
-              style={{
-                border: '1px solid',
-                padding: '10px 20px',
-                borderRadius: '5px',
-              }}
-              className="btn btn-primary"
-            >
-              Save Entry
-            </button>
-          </div>
-        </form>
+            <div className={styles.flexContainer2}>
+              <div className={styles.textContainer}>
+                <textarea
+                  name="text"
+                  value={entry.text}
+                  onChange={handleInput}
+                  className={styles.textarea}
+                  placeholder="And I wanna talk about how..."
+                />
+              </div>
+            </div>
+            <div className={styles.flexContainer3}>
+              <div className={styles.trackDescription}>
+                <div className={styles.headingsContainer}>
+                  <h1 className={styles.headings}>Songs I was listening to</h1>
+                </div>
+                <h2 className={styles.headings2}> Put down what your top tracks of the day were! Please make sure everything is spelt 
+                  correctly
+                </h2>
+              </div>
+              <div className={styles.tracksContainer}>
+                {entry.tracks.map((track, index) => (
+                  <div key={index} className={styles.trackInput}>
+                    <h1 className={styles.headings}>Track {index + 1}</h1>
+                    <input
+                      placeholder="Artist"
+                      type="text"
+                      value={track.artist}
+                      onChange={(e) => handleTrackInput(index, 'artist', e.target.value)}
+                      className={styles.input}
+                    />
+                    <input
+                      placeholder="Track Title"
+                      type="text"
+                      value={track.trackTitle}
+                      onChange={(e) => handleTrackInput(index, 'trackTitle', e.target.value)}
+                      className={styles.input}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeTrack(index)}
+                      className={styles.removeButton}
+                    >
+                      Remove Track
+                    </button>
+                  </div>
+                ))}
+                <button type="button" onClick={addTrack} className={styles.button}>
+                  Add Another Track
+                </button>
+              </div>
+            </div>
+            <div className={styles.flexContainer4}>
+              <button type="submit" className={styles.button}>
+                Save Entry
+              </button>
+            </div>
+          </form>
+
+        </div>
       </div>
     </div>
   );

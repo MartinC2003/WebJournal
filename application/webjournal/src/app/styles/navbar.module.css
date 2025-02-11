@@ -11,34 +11,33 @@
 .titleContainer {
   width: 100%;
   text-align: center;
-  border-bottom: 3px solid #603892; /* Line below the title */
-  margin-bottom: 10px; /* Space between the line and nav links */
+  border-bottom: 3px solid #603892;  
+  margin-bottom: 10px;  
   display: flex;
   justify-content: center;
   align-items: center;
-  background: transparent;
 }
 
 .title {
-  font-size: 5.5rem; /* Updated font size */
+  font-size: 5.5rem;  
   margin-left: 10px;
   font-family: var(--font-planetkosmos);
 }
 
 .logo {
-  width: 9rem; /* Set width to match the title font size */
-  height: auto; /* Maintain aspect ratio */
+  width: 9rem;  
+  height: auto;  
 }
 
 .navLinksContainer {
   width: 100%;
-  border-bottom: 3px solid #603892; /* Line below the nav links */
-  padding-bottom: 10px; /* Space between the nav links and the line */
+  border-bottom: 3px solid #603892;  
+  padding-bottom: 10px;  
 }
 
 .navList {
   display: flex;
-  justify-content: space-around; /* Equally spaced out */
+  justify-content: space-around;  
   align-items: center;
   margin: 0;
   padding: 0;
