@@ -1,0 +1,97 @@
+.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Containers */
+.viewentryContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    justify-content: space-between;
+    max-width: 70%;
+}
+
+.pagecontentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    justify-content: space-between;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Entry Card */
+.entryCard {
+    width: 900px;
+    height: 211px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 60px;
+    border-bottom-left-radius: 60px;
+    border-bottom-right-radius: 20px;
+    margin: 30px;
+    padding-top: 15px;
+    background-color: #8B62AA;  
+    border: 15px solid transparent;  
+}
+
+.entrycardContent {
+    display: flex;
+    margin-left: 5%;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+.entrycardContent2 {
+    margin-bottom: 50px;
+}
+
+.entrycardContent3 {
+    padding-top: 50px;
+    margin-top: 50px;
+}
+.entrycardContentDate {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.entryName {
+    color: white;
+    font-family: var(--font-planetkosmos);
+    font-size: 60px;
+}
+
+.entryDate {
+    color: white;
+    font-family: var(--font-nullshock); 
+    font-size: 20px;
+}
+
+.button {
+    padding: 10px 20px;
+    margin-left: 5%;
+    margin-right: 5%;  
+    width: 245px; 
+    font-size: 20px;
+    color: white;
+    background-color: #9994D0;
+    border-radius: 50px; 
+    font-family: var(--font-nullshock); 
+  }
+/* Images */
+.titleImage {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+

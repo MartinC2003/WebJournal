@@ -89,13 +89,13 @@ function NewEntry() {
     <div className={styles.app}>
       <div className={styles.pagecontentContainer}>
         <div className={styles.titleContainer}>
-              <Image
-                src="/createentry/createentry-title.png"
-                className={styles.titleImage}
-                width={1188}
-                height={211}
-                alt="Entry Title"
-              />
+          <Image
+            src="/createentry/createentry-title.png"
+            className={styles.titleImage}
+            width={1188}
+            height={211}
+            alt="Entry Title"
+          />
         </div>
         <div className={styles.createentryContainer}>
           <form onSubmit={addEntry}>

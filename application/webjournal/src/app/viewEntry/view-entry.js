@@ -1,11 +1,13 @@
 // src/app/viewEntry/view-entry.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
 import { UserAuth } from '@/api/AuthContext';
 import { db } from '@/api/firebase';
-import { useRouter } from 'next/navigation';  
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import styles from '../styles/viewentry.module.css';
 
 function ViewEntry({ selectedDate }) {
   const { user } = UserAuth();
@@ -38,76 +40,63 @@ function ViewEntry({ selectedDate }) {
     }
   }, [user]);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, 'DairyEntries', id));
-      console.log('Entry deleted successfully!');
-      setEntries((prevEntries) => prevEntries.filter((entry) => entry.id !== id));
-    } catch (error) {
-      console.error('Error deleting entry:', error);
-      window.alert(`Error deleting entry: ${error.message}`);
-    }
-  };
-
   const handleViewMore = (id) => {
     router.push(`/viewEntry/${id}`);
   };
-  
-  
+
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
 
   const filteredEntries = selectedDate
     ? entries.filter(entry => entry.date === selectedDate)
     : entries;
 
   return (
-    <div>
-      <div style={{ margin: 'auto' }}>
-        {filteredEntries.map((entry) => (
-          <div key={entry.id} style={{ background: '#08065a', boxShadow: '0 4px 8px rgba(0,0,0,0.2)', border: '1px solid #ccc', padding: '10px', marginBottom: '20px', position: 'relative', display: 'flex', borderRadius: '10px' }}>
-            {entry.mood === 'Sad' && <img src="/sad.gif" alt="Sad" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-            {entry.mood === 'Happy' && <img src="/happy.gif" alt="Happy" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-            {entry.mood === 'Angry' && <img src="/angry.gif" alt="Angry" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-            {entry.mood === 'Neutral' && <img src="/neutral.gif" alt="Neutral" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-            {entry.mood === 'Annoyed' && <img src="/annoyed.gif" alt="Annoyed" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-            {entry.mood === 'Bored' && <img src="/bored.gif" alt="Bored" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-            {entry.mood === 'Scared' && <img src="/scared.gif" alt="Scared" style={{ marginRight: '10px', width: '100px', height: '100px' }} />}
-
-            <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '20px' }}>{entry.title}</h2>
-              <p>Date: {entry.date}</p>
-              <p>Entry: {entry.text}</p>
+    <div className={styles.entriesContainer}>
+      {filteredEntries.map((entry) => (
+        <div key={entry.id} className={styles.entryCard}>
+          <div className={styles.entrycardContent}>
+            <Image 
+            src="/viewentry/viewentryimg-plc.png"
+            className={styles.entryImage}
+            width={200}
+            height={411}
+            alt="Entry Title"
+            />
+            <div className={styles.entrycardContent2}>
+              <div className={styles.entrycardContentDate}>
+                <Image 
+                src="/icons/VeIcon.svg"
+                className={styles.entryImage}
+                width={20}
+                height={20}
+                alt="Entry Title"
+                />
+                <p className={styles.entryDate}>{formatDate(entry.date)}</p>
+                <Image 
+                src="/icons/VeIcon.svg"
+                className={styles.entryImage}
+                width={20}
+                height={20}
+                alt="Entry Title"
+                />
+              </div>
+              <h2 className={styles.entryName}> {entry.title}</h2>
             </div>
-            <button
-              onClick={() => handleDelete(entry.id)}
-              style={{
-                marginLeft: 'auto',
-                padding: '5px 10px',
-                alignSelf: 'end',
-                borderRadius: '5px',
-                backgroundColor: 'transparent',
-                border: '1px solid ',
-                cursor: 'pointer',
-              }}
-            >
-              Delete
-            </button>
-            <button
-              onClick={() => handleViewMore(entry.id)}
-              style={{
-                marginLeft: '10px',
-                padding: '5px 10px',
-                alignSelf: 'end',
-                borderRadius: '5px',
-                backgroundColor: 'transparent',
-                border: '1px solid ',
-                cursor: 'pointer',
-              }}
-            >
-              View More
-            </button>
+            <div className={styles.entrycardContent3}>
+              <button
+                onClick={() => handleViewMore(entry.id)}
+                className={styles.button}
+              >
+                View More
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }

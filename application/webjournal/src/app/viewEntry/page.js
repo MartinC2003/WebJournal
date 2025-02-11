@@ -1,26 +1,10 @@
 'use client';
-import ViewEntry from './view-entry';
+import Image from "next/image";
+import { useState } from "react";
 import { UserAuth } from '../../api/AuthContext';
+import styles from '../styles/viewentry.module.css';
 import BasicDateCalendar from './calendar';
-import React, { useState, useEffect } from "react";
-
-const gridContainerStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(5, 1fr)',
-  gridTemplateRows: 'repeat(3, 1fr)',
-  padding: '50px',
-  columnGap: '10px',
-  rowGap: '10px'
-};
-
-const ViewEntryContainerStyle = {
-  backgroundColor: 'white',
-  gridArea: '1 / 4 / 4 / 6',
-};
-
-const ViewCalendarStyle = {
-  gridArea: '1 / 1 / 4 / 4',
-}
+import ViewEntry from './view-entry';
 
 const ViewEntryPage = () => {
   const { user } = UserAuth();
@@ -28,7 +12,7 @@ const ViewEntryPage = () => {
 
   if (!user) {
     return (
-      <div style={gridContainerStyle}>
+      <div >
         <p>Please log in to view an entry.</p>
       </div>
     );
@@ -39,12 +23,25 @@ const ViewEntryPage = () => {
   };
 
   return (
-    <div style={gridContainerStyle}>
-      <div style={ViewEntryContainerStyle}>
-        <ViewEntry selectedDate={selectedDate} />
-      </div>
-      <div style={ViewCalendarStyle}>
-        <BasicDateCalendar onDateSelect={handleDateSelect} />
+    <div className={styles.app}>
+      <div className={styles.pagecontentContainer}>
+        <div className={styles.titleContainer}>
+          <Image 
+            src="/viewentry/viewentries-title.png"
+            className={styles.titleImage}
+            width={1188}
+            height={211}
+            alt="Entry Title"
+          />
+        </div>
+        <div className={styles.viewentryContainer}>
+          <div className={styles.calendar}>
+            <BasicDateCalendar onDateSelect={handleDateSelect} />
+          </div>
+          <div >
+            <ViewEntry selectedDate={selectedDate} />
+          </div>
+        </div>
       </div>
     </div>
   );
