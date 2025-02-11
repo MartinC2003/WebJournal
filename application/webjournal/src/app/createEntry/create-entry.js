@@ -55,7 +55,7 @@ function NewEntry() {
       if (allTracksFilled) {
         try {
           await addDoc(collection(db, 'DairyEntries'), {
-            date: new Date().toISOString().slice(0, 10),
+            date: entry.date,
             title: entry.title.trim(),
             mood: entry.mood.trim(),
             text: entry.text.trim(),
@@ -64,7 +64,7 @@ function NewEntry() {
           });
 
           setEntry({
-            date: new Date().toISOString().slice(0, 10),
+            date: '',
             title: '',
             mood: '',
             text: '',
@@ -99,51 +99,64 @@ function NewEntry() {
         </div>
         <div className={styles.createentryContainer}>
           <form onSubmit={addEntry}>
-          <div className={styles.flexContainer}>
-            <div className={styles.imageContainer}>
-              <Image
-                src="/createentry/createentryimg-plc.png"
-                className={styles.image}
-                width={544}
-                height={809}
-                alt="Entry Placeholder"
-              />
-            </div>
-            <div className={styles.formContainer}>
-                <div className={styles.headingsContainer}>
-                  <Image src={CeIcon} className={styles.icon} />
-                  <h1 className={styles.headings}>Title</h1>
-                </div>
-                <input
-                  placeholder="Title"
-                  type="text"
-                  name="title"
-                  value={entry.title}
-                  onChange={handleInput}
-                  className={styles.input}
+            <div className={styles.flexContainer}>
+              <div className={styles.imageContainer}>
+                <Image
+                  src="/createentry/createentryimg-plc.png"
+                  className={styles.image}
+                  width={544}
+                  height={809}
+                  alt="Entry Placeholder"
                 />
-                <div className={styles.headingsContainer}>
-                  <Image src={CeIcon} className={styles.icon} />
-                  <h1 className={styles.headings}>Mood</h1>
-                </div>
-                <select name="mood" value={entry.mood} onChange={handleMoodSelect} className={styles.select}>
-                  <option value="">I'm feeling very...</option>
-                  <option value="Happy">Happy</option>
-                  <option value="Sad">Sad</option>
-                  <option value="Angry">Angry</option>
-                  <option value="Scared">Scared</option>
-                  <option value="Disgusted">Disgusted</option>
-                </select>
-            </div>
+              </div>
+              <div className={styles.formContainer}>  
+                  <div className={styles.headingsContainer}>
+                    <Image src={CeIcon} className={styles.icon} />
+                    <h1 className={styles.headings}>Title</h1>
+                  </div>
+                  <input
+                    placeholder="Title"
+                    type="text"
+                    name="title"
+                    value={entry.title}
+                    onChange={handleInput}
+                    className={styles.input}
+                  />
+                  <div className={styles.headingsContainer}>
+                    <Image src={CeIcon} className={styles.icon} />
+                    <h1 className={styles.headings}>Mood</h1>
+                  </div>
+                  <select name="mood" value={entry.mood} onChange={handleMoodSelect} className={styles.select}>
+                    <option value="">I'm feeling very...</option>
+                    <option value="Happy">Happy</option>
+                    <option value="Sad">Sad</option>
+                    <option value="Angry">Angry</option>
+                    <option value="Scared">Scared</option>
+                    <option value="Disgusted">Disgusted</option>
+                  </select>
+                  <div className={styles.headingsContainer}>
+                    <Image src={CeIcon} className={styles.icon} />
+                    <h1 className={styles.headings}>Date</h1>
+                  </div>
+                  <input
+                    type="date"
+                    name="date"
+                    value={entry.date}
+                    onChange={handleInput}
+                    className={styles.input}
+                  />
+              </div>
             </div>
             <div className={styles.flexContainer2}>
+              <div className={styles.headingsContainer}>
+                <h1 className={styles.headings}>Write down how your day went</h1>
+              </div>
               <div className={styles.textContainer}>
                 <textarea
                   name="text"
                   value={entry.text}
                   onChange={handleInput}
                   className={styles.textarea}
-                  placeholder="And I wanna talk about how..."
                 />
               </div>
             </div>
@@ -159,7 +172,7 @@ function NewEntry() {
               <div className={styles.tracksContainer}>
                 {entry.tracks.map((track, index) => (
                   <div key={index} className={styles.trackInput}>
-                    <h1 className={styles.headings}>Track {index + 1}</h1>
+                    <h1 className={styles.headings3}>Track {index + 1}</h1>
                     <input
                       placeholder="Artist"
                       type="text"
@@ -177,19 +190,19 @@ function NewEntry() {
                     <button
                       type="button"
                       onClick={() => removeTrack(index)}
-                      className={styles.removeButton}
+                      className={styles.button}
                     >
                       Remove Track
                     </button>
                   </div>
                 ))}
                 <button type="button" onClick={addTrack} className={styles.button}>
-                  Add Another Track
+                  Add Track
                 </button>
               </div>
             </div>
             <div className={styles.flexContainer4}>
-              <button type="submit" className={styles.button}>
+              <button type="submit" className={styles.buttonsubmit}>
                 Save Entry
               </button>
             </div>
