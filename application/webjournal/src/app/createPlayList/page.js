@@ -2,29 +2,50 @@
 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import SpotifyAuth from './spotify-auth';
+import SpotifyRequest from './spotify-request';
 
 function CreatePlaylistHome() {
     const [message, setMessage] = useState("Loading");
     const [user, setUser] = useState(null);
+    const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
+    const [spotifyToken, setSpotifyToken] = useState(null); // 🔹 Store the token
+
+    const checkSpotifyAuth = async (idToken) => {
+        try {
+            const response = await fetch("http://localhost:8080/api/home", {
+                method: 'GET',
+                credentials: "include",
+                headers: {
+                    "Authorization": `Bearer ${idToken}`, // ✅ Send Firebase ID token
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            const data = await response.json();
+            console.log("Server Response:", data);
+    
+            if (data.error === "Spotify not authenticated") {
+                setSpotifyAuthenticated(false);
+            } else {
+                setSpotifyAuthenticated(true);
+                setSpotifyToken(data.spotifyAccessToken); // ✅ Save the token
+                setMessage(data.message);
+            }
+        } catch (error) {
+            console.error("Error checking Spotify authentication:", error);
+            setMessage("Error communicating with server.");
+        }
+    };
+    
 
     useEffect(() => {
         const auth = getAuth();
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
-                currentUser.getIdToken().then((idToken) => {
-                    fetch("http://localhost:8080/api/home", {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${idToken}`,
-                        },
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        setMessage(data.message);
-                    });
-                });
+                const idToken = await currentUser.getIdToken();
+                await checkSpotifyAuth(idToken);
             } else {
                 setMessage("User not authenticated");
             }
@@ -33,9 +54,15 @@ function CreatePlaylistHome() {
         return () => unsubscribe();
     }, []);
 
-    return (
-        <div>{message}</div>
-    );
+    if (user && !spotifyAuthenticated) {
+        return <SpotifyRequest />;
+    }
+
+    if (user && spotifyAuthenticated) {
+        return <SpotifyAuth message={message} token={spotifyToken} />; // 🔹 Pass the token to SpotifyAuth
+    }
+
+    return <div>{message}</div>;
 }
 
 export default CreatePlaylistHome;

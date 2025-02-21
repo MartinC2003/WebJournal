@@ -20,7 +20,6 @@
     flex-direction: column;
     align-items: center;
     margin: auto;
-    justify-content: space-between;
 }
 
 .titleContainer {
@@ -82,7 +81,7 @@
     margin-left: 5%;
     margin-right: 5%;  
     width: 245px; 
-    font-size: 20px;
+    font-size: 15px;
     color: white;
     background-color: #9994D0;
     border-radius: 50px; 
@@ -95,3 +94,6 @@
     margin-bottom: 20px;
 }
 
+.button:hover {
+    background-color: #666389;
+  }

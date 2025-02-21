@@ -1,7 +1,7 @@
+import { Input } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { UserAuth } from '../../api/AuthContext';
-import { useRouter } from 'next/navigation';  
-import { Input } from '@mui/material';
 import styles from '../styles/login.module.css';
 
 export const AuthLogin = () => {
@@ -32,29 +32,29 @@ export const AuthLogin = () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <form onSubmit={handleSubmit}>
-      <div className={styles.authInput}>
-          <Input
-            sx={inputStyle}  
-            placeholder="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <div className={styles.authInput}>
             <Input
-            sx={inputStyle}  
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button
-          className={styles.button}
-          type="submit"
-          style={{ cursor: 'pointer', borderRadius: '50px' }}
-        >
-          Login
-        </button>
+              sx={inputStyle}  
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+              <Input
+              sx={inputStyle}  
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button
+            className={styles.button}
+            type="submit"
+            style={{ cursor: 'pointer', borderRadius: '50px' }}
+          >
+            Login
+          </button>
       </form>
     </div>
   );

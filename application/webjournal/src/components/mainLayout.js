@@ -73,10 +73,6 @@ export default function RootLayout({ children }) {
         <meta name="description" content={metadata.description} />
       </head>
       <body>
-        <div className="video-container">
-          <video src={require('../../public/login/loginbg.mp4')} autoPlay muted loop/>
-          <div className="video-overlay"></div>
-        </div>
         <AuthContextProvider>
           <Navbar />
           {children}

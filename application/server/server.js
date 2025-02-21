@@ -1,8 +1,9 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const admin = require("./firebase");  
+const session = require("express-session");  
+const admin = require("./firebase");
 const axios = require("axios");
 const querystring = require("querystring");
 
@@ -12,11 +13,25 @@ const PORT = 8080;
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+const auth_token = Buffer.from(`${client_id}:${client_secret}`, 'utf-8').toString('base64');
 
-app.use(cors());
+// Debug logs to check if .env values are loaded
+console.log("Client ID:", client_id);
+console.log("Redirect URI:", redirect_uri);
+console.log("Client Secret:", client_secret ? "Loaded" : "Missing");
+
+// Middleware
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
-
+// Firebase Token Verification Middleware
 const verifyFirebaseToken = async (req, res, next) => {
   const idToken = req.headers.authorization?.split("Bearer ")[1];
 
@@ -33,7 +48,27 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
+const getAuth = async () => {
+  try{
+    //make post request to SPOTIFY API for access token, sending relavent info
+    const token_url = 'https://accounts.spotify.com/api/token';
+    const data = qs.stringify({'grant_type':'client_credentials'});
 
+    const response = await axios.post(token_url, data, {
+      headers: { 
+        'Authorization': `Basic ${auth_token}`,
+        'Content-Type': 'application/x-www-form-urlencoded' 
+      }
+    })
+    //return access token
+    return response.data.access_token;
+    //console.log(response.data.access_token);   
+  }catch(error){
+    //on fail, log the error in console
+    console.log(error);
+  }
+}
+// Spotify Login Route
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
   const scope = "user-read-private user-read-email";
@@ -50,46 +85,51 @@ app.get("/login", (req, res) => {
   );
 });
 
-
+// Spotify Callback Route
 app.get("/callback", async (req, res) => {
-  const { code, state } = req.query;
+  const { code } = req.query;
 
   if (!code) {
     return res.status(400).json({ error: "Authorization code not provided" });
   }
 
   try {
-   
     const response = await axios.post(
       "https://accounts.spotify.com/api/token",
       querystring.stringify({
         grant_type: "authorization_code",
         code: code,
         redirect_uri: redirect_uri,
-        client_id: client_id,
-        client_secret: client_secret,
       }),
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            Buffer.from(client_id + ":" + client_secret).toString("base64"),
+        },
+      }
     );
 
     const { access_token, refresh_token } = response.data;
 
-    
-    req.session = { spotifyAccessToken: access_token };
+    // Store tokens in session
+    req.session.spotifyAccessToken = access_token;
+    req.session.spotifyRefreshToken = refresh_token;
 
-    res.json({
-      message: "Successfully authenticated with Firebase and Spotify!",
-      spotifyAccessToken: access_token,
-      firebaseUser: req.user,
-    });
+    console.log("Spotify Access Token Received:", access_token);
+
+    // Redirect back to frontend after successful login
+    res.redirect("http://localhost:3000/createPlayList");
   } catch (error) {
-    console.error("Error getting Spotify token:", error);
+    console.error("Error getting Spotify token:", error.response?.data || error);
     res.status(500).json({ error: "Failed to get Spotify access token" });
   }
 });
 
+// Protected API Route (Requires Firebase & Spotify Auth)
 app.get("/api/home", verifyFirebaseToken, async (req, res) => {
-  if (!req.session || !req.session.spotifyAccessToken) {
+  if (!req.session.spotifyAccessToken) {
     return res.status(401).json({ error: "Spotify not authenticated" });
   }
 
@@ -100,7 +140,7 @@ app.get("/api/home", verifyFirebaseToken, async (req, res) => {
   });
 });
 
-
+// Function to Generate Random State String
 function generateRandomString(length) {
   let text = "";
   let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -114,3 +154,9 @@ function generateRandomString(length) {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+app.get("/session-test", (req, res) => {
+  res.json({ session: req.session });
+});
+
+console.log("Received request at /api/home")

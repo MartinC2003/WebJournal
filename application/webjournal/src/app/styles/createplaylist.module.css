@@ -1,0 +1,98 @@
+.app {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.titleImage {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  margin-left: 5%;
+  margin-right: 5%;  
+  width: 300px; 
+  font-size: 20px;
+  color: white;
+  background-color: #9994D0;
+  border-radius: 50px; 
+  font-family: var(--font-nullshock); 
+}
+
+.pagecontentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.spotifyrequestContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.headingsContainer {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid #603892;
+}
+
+.headings {
+  margin-bottom: 10px;
+  font-family: var(--font-ethnocentric);
+  margin-left: 10px;
+  color: #603892;
+  font-size: 2rem;
+}
+
+.headings2 {
+  margin-bottom: 10px;
+  font-family: var(--font-ethnocentric);
+  color: #603892;
+  font-size: 15px;
+}
+
+.buttonsigninContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-bottom: 20px;
+  margin-top: 50px;
+}
+
+.buttonsignin {
+  gap: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  margin-left: 5%;
+  margin-right: 5%;  
+  width: 345px; 
+  height: 71px; 
+  font-size: 25px;
+  color: white;
+  background-color: #9994D0;
+  border-radius: 50px; 
+  font-family: var(--font-nullshock); 
+}
+
+.buttonsignin:hover {
+  background-color: #666389;
+}

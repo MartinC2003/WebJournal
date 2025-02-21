@@ -69,9 +69,13 @@
   margin-right: 5%;  
   width: 345px; 
   height: 71px; 
-  font-size: 20px;
+  font-size: 25px;
   color: white;
   background-color: #9994D0;
   border-radius: 50px; 
   font-family: var(--font-nullshock); 
+}
+
+.button:hover {
+  background-color: #666389;
 }
