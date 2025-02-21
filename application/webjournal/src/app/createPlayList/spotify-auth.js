@@ -1,37 +1,15 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import styles from '../styles/createplaylist.module.css';
+import PlaylistCreatorService from "./playlistcreator-service";
 
 function SpotifyAuth({ message, token }) {
     const [userProfile, setUserProfile] = useState(null);
-
-    const fetchSpotifyUserProfile = async (token) => {
-        try {
-            const response = await fetch("https://api.spotify.com/v1/me", {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Spotify API error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error("Error fetching Spotify user profile:", error);
-            return null;
-        }
-    };
+    const { fetchSpotifyUserProfile } = PlaylistCreatorService();
 
     useEffect(() => {
         if (token) {
-            fetchSpotifyUserProfile(token).then(data => {
-                if (data) setUserProfile(data);
-            });
+            fetchSpotifyUserProfile(token).then(data => setUserProfile(data));
         }
     }, [token]);
 
@@ -61,3 +39,4 @@ function SpotifyAuth({ message, token }) {
 }
 
 export default SpotifyAuth;
+

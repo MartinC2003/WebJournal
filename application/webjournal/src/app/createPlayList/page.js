@@ -9,7 +9,7 @@ function CreatePlaylistHome() {
     const [message, setMessage] = useState("Loading");
     const [user, setUser] = useState(null);
     const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
-    const [spotifyToken, setSpotifyToken] = useState(null); // 🔹 Store the token
+    const [spotifyToken, setSpotifyToken] = useState(null);
 
     const checkSpotifyAuth = async (idToken) => {
         try {
@@ -17,7 +17,7 @@ function CreatePlaylistHome() {
                 method: 'GET',
                 credentials: "include",
                 headers: {
-                    "Authorization": `Bearer ${idToken}`, // ✅ Send Firebase ID token
+                    "Authorization": `Bearer ${idToken}`,
                     "Content-Type": "application/json"
                 }
             });
@@ -29,7 +29,7 @@ function CreatePlaylistHome() {
                 setSpotifyAuthenticated(false);
             } else {
                 setSpotifyAuthenticated(true);
-                setSpotifyToken(data.spotifyAccessToken); // ✅ Save the token
+                setSpotifyToken(data.spotifyAccessToken);
                 setMessage(data.message);
             }
         } catch (error) {
@@ -38,7 +38,6 @@ function CreatePlaylistHome() {
         }
     };
     
-
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -59,7 +58,7 @@ function CreatePlaylistHome() {
     }
 
     if (user && spotifyAuthenticated) {
-        return <SpotifyAuth message={message} token={spotifyToken} />; // 🔹 Pass the token to SpotifyAuth
+        return <SpotifyAuth message={message} token={spotifyToken} />;
     }
 
     return <div>{message}</div>;
