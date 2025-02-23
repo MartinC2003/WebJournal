@@ -1,9 +1,19 @@
+/* General Layout */
 .app {
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
+.pagecontentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  justify-content: space-between;
+}
+
+/* Title and Description */
 .titleContainer {
   display: flex;
   justify-content: center;
@@ -17,34 +27,25 @@
   margin-bottom: 20px;
 }
 
-.button {
-  padding: 10px 20px;
-  margin-left: 5%;
-  margin-right: 5%;  
-  width: 300px; 
-  font-size: 20px;
-  color: white;
-  background-color: #9994D0;
-  border-radius: 50px; 
-  font-family: var(--font-nullshock); 
-}
-
-.pagecontentContainer {
+.descContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin: auto;
-}
-
-.spotifyrequestContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: auto;
-  justify-content: space-between;
   width: 100%;
+  max-width: 400px;
+  margin-top: 5%;
+  font-family: var(--font-tahoma); 
+  color: #603892; 
+  font-weight: 900;
 }
 
+.desc2 {
+  margin-top: 5%;
+  font-size: 20px;
+}
+.desc {
+  margin-top: 5%;
+  font-size: 27px;
+}
 .headingsContainer {
   width: 100%;
   text-align: center;
@@ -69,6 +70,8 @@
   font-size: 15px;
 }
 
+/* Buttons */
+
 .buttonsigninContainer {
   display: flex;
   flex-direction: row-reverse;
@@ -92,7 +95,104 @@
   border-radius: 50px; 
   font-family: var(--font-nullshock); 
 }
-
 .buttonsignin:hover {
   background-color: #666389;
 }
+
+/* Flex Containers */
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.flexContainer2 {
+  display: flex;
+  flex-direction: row;
+  background-color: #603892;
+  color: white;
+  overflow: hidden; 
+  max-width: 1000px;
+  width: 1000px;
+  border-top-left-radius: 60px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 60px;
+  border-bottom-left-radius: 20px;
+  margin: 30px;
+  padding: 30px;
+  gap: 50px;
+}
+
+/* Mood Selection */
+.chooseMoodTitle {
+  font-family: var(--font-nullshock); 
+  font-size: 4rem;
+  border-bottom: 3px solid white;
+
+}
+
+.chooseMoodContainer {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.moodImageContainer {
+  flex: 1;
+  padding: 20px;
+  height: auto;
+  justify-content: center;
+  max-width: 387px;
+}
+
+.moodMessage {
+  font-size: 20px;
+  padding: 5px;
+  margin: 5px;
+  margin-top: 2%;
+  font-family: var(--font-tahoma); 
+}
+
+.selectContainer{
+  display: flex;
+  flex-direction:row;
+  max-width: 290px;
+}
+
+.selectContainer2{
+  margin-bottom: 5%;
+  display: flex;
+  flex-direction:row;
+  max-width: 100%;
+  gap: 20px;
+}
+.selectInput {
+  flex: 1;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 50px; 
+  color: black;
+  font-family: var(--font-tahoma); 
+}
+
+.selectTitle{
+  margin-top: 2%;
+  font-size: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid white;
+}
+/* Image Containers */
+.imageContainer {
+  justify-content: center;
+  
+}
+
+.moodImage {
+  border-radius: 50px;
+  width: 300px;
+  height: 300px;
+}
+

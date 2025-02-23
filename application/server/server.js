@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const session = require("express-session");  
+const session = require("express-session");
 const admin = require("./firebase");
 const axios = require("axios");
 const querystring = require("querystring");
@@ -48,7 +48,6 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
-
 // Spotify Login Route
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
@@ -92,13 +91,17 @@ app.get("/callback", async (req, res) => {
       }
     );
 
-    const { access_token, refresh_token } = response.data;
+    const { access_token, refresh_token, expires_in } = response.data;
 
-    // Store tokens in session
+    // Store tokens in session and track the expiration time
     req.session.spotifyAccessToken = access_token;
     req.session.spotifyRefreshToken = refresh_token;
+    req.session.spotifyTokenExpiration = Date.now() + (expires_in - 60) * 1000; // Store expiration time (subtracting 1 minute for safety)
 
     console.log("Spotify Access Token Received:", access_token);
+
+    // Preemptively refresh the access token before it expires
+    scheduleTokenRefresh(req.session.spotifyTokenExpiration);
 
     // Redirect back to frontend after successful login
     res.redirect("http://localhost:3000/createPlayList");
@@ -114,14 +117,34 @@ app.get("/api/home", verifyFirebaseToken, async (req, res) => {
     return res.status(401).json({ error: "Spotify not authenticated" });
   }
 
-  res.json({
-    message: "Welcome! You are authenticated with Firebase and Spotify.",
-    user: req.user,
-    spotifyAccessToken: req.session.spotifyAccessToken,
-  });
+  try {
+    const response = await axios.get("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${req.session.spotifyAccessToken}` },
+    });
+
+    res.json({
+      message: "Welcome! You are authenticated with Firebase and Spotify.",
+      user: req.user,
+      spotifyAccessToken: req.session.spotifyAccessToken,
+    });
+  } catch (error) {
+    if (error.response?.status === 401) {
+      console.log("Spotify token expired, attempting to refresh...");
+
+      try {
+        await refreshSpotifyToken(req);
+        res.redirect("/api/home");
+      } catch (refreshError) {
+        console.error("Failed to refresh token:", refreshError);
+        res.status(500).json({ error: "Failed to refresh Spotify token" });
+      }
+    } else {
+      res.status(500).json({ error: "Failed to retrieve Spotify user data" });
+    }
+  }
 });
 
-// Function to Generate Random State String
+// Function to generate random state string
 function generateRandomString(length) {
   let text = "";
   let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -131,13 +154,63 @@ function generateRandomString(length) {
   return text;
 }
 
+// Refresh Token Route
+async function refreshSpotifyToken(req) {
+  const refresh_token = req.session.spotifyRefreshToken;
+
+  if (!refresh_token) {
+    throw new Error("No refresh token found.");
+  }
+
+  try {
+    const response = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      querystring.stringify({
+        grant_type: "refresh_token",
+        refresh_token: refresh_token,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: "Basic " + Buffer.from(client_id + ":" + client_secret).toString("base64"),
+        },
+      }
+    );
+
+    const { access_token, refresh_token: new_refresh_token, expires_in } = response.data;
+
+    // Store the new access token and refresh token
+    req.session.spotifyAccessToken = access_token;
+    req.session.spotifyRefreshToken = new_refresh_token || refresh_token;
+    req.session.spotifyTokenExpiration = Date.now() + (expires_in - 60) * 1000; // Update expiration time
+
+    // Preemptively refresh the token again
+    scheduleTokenRefresh(req.session.spotifyTokenExpiration);
+
+    console.log("Spotify Access Token Refreshed:", access_token);
+  } catch (error) {
+    console.error("Error refreshing Spotify token:", error.response?.data || error);
+    throw new Error("Failed to refresh Spotify token");
+  }
+}
+
+// Schedule the token refresh before expiration
+function scheduleTokenRefresh(expirationTime) {
+  const timeUntilRefresh = expirationTime - Date.now();
+  if (timeUntilRefresh > 0) {
+    setTimeout(async () => {
+      console.log("Refreshing Spotify token preemptively...");
+      await refreshSpotifyToken(req);
+    }, timeUntilRefresh);
+  }
+}
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
+// Session Test Route
 app.get("/session-test", (req, res) => {
   res.json({ session: req.session });
 });
-
-console.log("Received request at /api/home")

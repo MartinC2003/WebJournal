@@ -143,6 +143,7 @@
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 50px; 
+    font-family: var(--font-tahoma); 
 }
 
 .textarea {
