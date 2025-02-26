@@ -97,3 +97,10 @@
 .button:hover {
     background-color: #666389;
   }
+
+.moodImage {
+border-radius: 50px;
+width: 300px;
+height: 300px;
+}
+
