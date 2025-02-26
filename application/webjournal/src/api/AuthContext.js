@@ -1,26 +1,31 @@
-"use client"
-import { useContext, createContext, useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import React, { useContext, useEffect, useState } from "react";
+import { auth } from "./firebase"; // assuming this is where your Firebase auth is set up
 
-const AuthContext = createContext();
+export const AuthContext = React.createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  const [user, setUser] = useState(() => window.localStorage.getItem("user") === "true");
+  // Initially set user to null or undefined, we will set it in useEffect
+  const [user, setUser] = useState(null);
 
+  // Log out user
   const logOut = async () => {
     await signOut(auth);
     setUser(null);
-    window.localStorage.removeItem('user');
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem('user');
+    }
   };
 
+  // On login, set the user and save to localStorage
   const onLogin = async (email, password) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const loggedInUser = userCredential.user;
-      console.log(loggedInUser);
       setUser(loggedInUser);
-      window.localStorage.setItem('user', 'true');
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem('user', 'true');
+      }
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -28,15 +33,31 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  // Set user from localStorage only after the component is mounted (client-side)
   useEffect(() => {
+    // Check if window is defined to prevent SSR issues
+    if (typeof window !== "undefined") {
+      const storedUser = window.localStorage.getItem("user");
+      if (storedUser === "true") {
+        // You could set this to some value indicating the user is logged in, for example `true`
+        setUser(true);
+      }
+    }
+
+    // Subscribe to Firebase Auth state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        window.localStorage.setItem('user', 'true');
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem('user', 'true');
+        }
       } else {
-        window.localStorage.removeItem('user');
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem('user');
+        }
       }
     });
+
     return () => unsubscribe();
   }, []);
 

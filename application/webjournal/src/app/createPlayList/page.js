@@ -1,50 +1,71 @@
-'use client';
+"use client";
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useEffect, useState } from 'react';
-import PlaylistCreatorService from './playlistcreator-service';
-import SpotifyAuth from './spotify-auth';
-import SpotifyRequest from './spotify-request';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
+import PlaylistCreatorService from "./playlistcreator-service";
+import SpotifyAuth from "./spotify-auth";
+import SpotifyRequest from "./spotify-request";
 
 function CreatePlaylistHome() {
-    const { checkSpotifyAuth, refreshSpotifyToken } = PlaylistCreatorService();   
-    const [message, setMessage] = useState("Loading");
-    const [user, setUser] = useState(null);
-    const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
-    const [spotifyToken, setSpotifyToken] = useState(null);
+  const { checkSpotifyAuth, refreshSpotifyToken } = PlaylistCreatorService();
+  const [message, setMessage] = useState("Loading");
+  const [user, setUser] = useState(null);
+  const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
+  const [spotifyToken, setSpotifyToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
 
-    useEffect(() => {
-        const auth = getAuth();
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            if (currentUser) {
-                setUser(currentUser);
-                const idToken = await currentUser.getIdToken();
-                // Check Spotify authentication status and handle token refresh
-                await checkSpotifyAuth(idToken, setSpotifyAuthenticated, setSpotifyToken, setMessage);
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
 
-                // Check if the token is expired, then refresh it
-                if (!spotifyAuthenticated) {
-                    console.log("Spotify not authenticated or token expired, refreshing...");
-                    await refreshSpotifyToken(idToken, setSpotifyToken, setSpotifyAuthenticated, setMessage);
-                }
-            } else {
-                setMessage("User not authenticated");
-            }
-        });
+        try {
+          // Get the Firebase ID Token
+          const idToken = await currentUser.getIdToken();
 
-        return () => unsubscribe();
-    }, [spotifyAuthenticated]);  // Add `spotifyAuthenticated` to dependency array
+          // Call backend to check authentication & get Spotify status
+          const response = await fetch("http://localhost:8080/api/home", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${idToken}`, // Pass the Firebase ID Token
+            },
+            credentials: "include", // Ensures cookies (if used) are sent
+          });
 
-    // Conditionally render based on authentication status
-    if (user && !spotifyAuthenticated) {
-        return <SpotifyRequest />;
-    }
+          const data = await response.json();
 
-    if (user && spotifyAuthenticated) {
-        return <SpotifyAuth message={message} token={spotifyToken} />;
-    }
+          if (response.ok) {
+            setSpotifyAuthenticated(true);
+            setSpotifyToken(data.spotifyAccessToken);
+            setMessage("Authenticated with Firebase and Spotify.");
+          } else {
+            setSpotifyAuthenticated(false);
+            setMessage(data.error || "Spotify not authenticated.");
+          }
+        } catch (error) {
+          console.error("Error checking authentication:", error);
+          setMessage("Failed to authenticate.");
+        }
+      } else {
+        setUser(null);
+        setSpotifyAuthenticated(false);
+        setMessage("User not authenticated");
+      }
+    });
 
-    return <div>{message}</div>;
+    return () => unsubscribe();
+  }, []);
+
+  if (user && !spotifyAuthenticated) {
+    return <SpotifyRequest />;
+  }
+
+  if (user && spotifyAuthenticated) {
+    return <SpotifyAuth message={message} token={spotifyToken} refreshSpotifyToken={refreshToken} />;
+  }
+
+  return <div>{message}</div>;
 }
 
 export default CreatePlaylistHome;

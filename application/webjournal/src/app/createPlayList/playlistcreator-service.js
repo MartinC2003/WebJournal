@@ -9,6 +9,7 @@
 //client displays link to playlist 
 
 function PlaylistCreatorService() {
+
     const fetchSpotifyUserProfile = async (token) => {
         try {
             const response = await fetch("https://api.spotify.com/v1/me", {
@@ -25,33 +26,6 @@ function PlaylistCreatorService() {
         } catch (error) {
             console.error("Error fetching Spotify profile:", error);
             return null;
-        }
-    };
-
-    const refreshSpotifyToken = async (idToken, setSpotifyToken, setSpotifyAuthenticated, setMessage) => {
-        try {
-            const response = await fetch("http://localhost:8080/refresh_token", {
-                method: 'GET',
-                credentials: "include",
-                headers: {
-                    "Authorization": `Bearer ${idToken}`,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            const data = await response.json();
-            if (data.access_token) {
-                console.log("Spotify token refreshed:", data.access_token);
-                setSpotifyToken(data.access_token);
-                setSpotifyAuthenticated(true);
-                setMessage("Spotify session refreshed.");
-            } else {
-                setSpotifyAuthenticated(false);
-                setMessage("Failed to refresh Spotify session.");
-            }
-        } catch (error) {
-            console.error("Error refreshing Spotify token:", error);
-            setMessage("Error refreshing Spotify session.");
         }
     };
 
@@ -85,8 +59,22 @@ function PlaylistCreatorService() {
         }
     };
 
+    const refreshSpotifyToken = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/refresh_token", { method: "GET" });
+            if (!response.ok) throw new Error("Failed to refresh token");
 
-    return { fetchSpotifyUserProfile, checkSpotifyAuth, refreshSpotifyToken, };
+            const data = await response.json();
+            return data.access_token; // Ensure this is returned
+        } catch (error) {
+            console.error("Error refreshing Spotify token:", error);
+            throw error;
+        }
+    };
+
+
+
+    return { fetchSpotifyUserProfile, checkSpotifyAuth, refreshSpotifyToken };
 }
 
 export default PlaylistCreatorService;

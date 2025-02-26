@@ -5,36 +5,20 @@ import PlaylistCreatorService from "./playlistcreator-service";
 
 function SpotifyAuth({ token }) {
     const [userProfile, setUserProfile] = useState(null);
-    const { fetchSpotifyUserProfile } = PlaylistCreatorService(token);
+    const [refreshToken, setRefreshToken] = useState(null);
+    const { fetchSpotifyUserProfile, refreshSpotifyToken, createPlaylist } = PlaylistCreatorService(token);
     const [mood, setMood] = useState("Happy");  
     const [month, setMonth] = useState("January"); 
     const [year, setYear] = useState(new Date().getFullYear()); 
     const [moodMessage, setMoodMessage] = useState(""); 
+
     const moodDescriptions = {
-        "Happy": 
-          "An uplifting playlist full of positive energy, perfect for celebrating or enjoying a sunny day. " +
-          "Let the music lift your spirits and keep you moving.",
-      
-        "Sad": 
-          "A comforting playlist for when you're feeling down, offering solace and a space to process your emotions. " +
-          "Let the music wrap around you like a comforting embrace.",
-      
-        "Angry": 
-          "A high-energy playlist to help channel frustration and power through chaos. " +
-          "These intense tracks hit hard and unapologetically. " +
-          "Let the music be your release.",
-      
-        "Scared": 
-          "A chilling playlist full of eerie melodies that create a suspenseful and mysterious atmosphere. " +
-          "Perfect for embracing fear or a horror vibe. ", 
-      
-        "Disgusted": 
-          "A rebellious playlist with gritty, unconventional tracks that break away from the norm. " +
-          "Perfect for when you're feeling edgy or frustrated. " +
-          "Let these raw sounds fuel your energy."
-      };
-      
-      
+        "Happy": "An uplifting playlist full of positive energy, perfect for celebrating or enjoying a sunny day.",
+        "Sad": "A comforting playlist for when you're feeling down, offering solace and a space to process your emotions.",
+        "Angry": "A high-energy playlist to help channel frustration and power through chaos.",
+        "Scared": "A chilling playlist full of eerie melodies that create a suspenseful and mysterious atmosphere.",
+        "Disgusted": "A rebellious playlist with gritty, unconventional tracks that break away from the norm."
+    };
 
     const moodImages = {
         "Happy": "/createplaylist/happy-albumcv-plc.png",
@@ -46,14 +30,29 @@ function SpotifyAuth({ token }) {
 
     useEffect(() => {
         if (token) {
-            fetchSpotifyUserProfile(token).then((data) => {
-                console.log("Fetched Spotify Profile:", data); 
-                setUserProfile(data);
-            }).catch((error) => {
-                console.error("Error fetching Spotify profile:", error);
-            });
+            fetchSpotifyUserProfile(token)
+                .then((data) => {
+                    console.log("Fetched Spotify Profile:", data);
+                    setUserProfile(data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching Spotify profile:", error);
+                });
         }
     }, [token]);
+    
+    useEffect(() => {
+        if (!refreshToken) {
+            refreshSpotifyToken()
+                .then((newToken) => {
+                    setRefreshToken(newToken);
+                })
+                .catch((error) => {
+                    console.error("Error refreshing Spotify token:", error);
+                });
+        }
+    }, []);  
+    
 
     useEffect(() => {
         setMoodMessage(moodDescriptions[mood]);
@@ -88,9 +87,7 @@ function SpotifyAuth({ token }) {
 
                         <div className={styles.desc}>
                             {userProfile ? (
-                                <>
-                                    Hello {userProfile.display_name}! Welcome to the Musicjournal Playlist Creator!
-                                </>
+                                <>Hello {userProfile.display_name}! Welcome to the Musicjournal Playlist Creator!</>
                             ) : (
                                 "Error, Spotify token expired"
                             )}
@@ -137,9 +134,8 @@ function SpotifyAuth({ token }) {
                                 value={month}
                                 onChange={(e) => setMonth(e.target.value)}
                             >
-                                {[
-                                    "January", "February", "March", "April", "May", "June",
-                                    "July", "August", "September", "October", "November", "December"
+                                {[ "January", "February", "March", "April", "May", "June",
+                                   "July", "August", "September", "October", "November", "December"
                                 ].map((monthOption) => (
                                     <option key={monthOption} value={monthOption}>
                                         {monthOption}

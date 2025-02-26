@@ -13,7 +13,7 @@ const PORT = 8080;
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
-const auth_token = Buffer.from(`${client_id}:${client_secret}`, 'utf-8').toString('base64');
+const {getAuth} = require("firebase-admin/auth") 
 
 // Debug logs to check if .env values are loaded
 console.log("Client ID:", client_id);
@@ -31,23 +31,31 @@ app.use(
   })
 );
 
-// Firebase Token Verification Middleware
+
+
 const verifyFirebaseToken = async (req, res, next) => {
   const idToken = req.headers.authorization?.split("Bearer ")[1];
 
   if (!idToken) {
-    return res.status(401).json({ error: "Unauthorized (No Token)" });
+    return res.status(401).json({ error: "Unauthorized (No Token Provided)" });
   }
 
   try {
+    // Verify the token
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedToken;
+    
+    // Extract user UID
+    const userUid = decodedToken.uid;
+    
+    console.log("Authenticated User UID:", userUid); // Log UID for debugging
+
+    req.user = decodedToken; // Attach user data to request
     next();
   } catch (error) {
+    console.error("Error verifying Firebase token:", error);
     return res.status(401).json({ error: "Unauthorized (Invalid Token)" });
   }
 };
-
 // Spotify Login Route
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
@@ -66,6 +74,7 @@ app.get("/login", (req, res) => {
 });
 
 // Spotify Callback Route
+//Runs after Login 
 app.get("/callback", async (req, res) => {
   const { code } = req.query;
 
@@ -91,17 +100,22 @@ app.get("/callback", async (req, res) => {
       }
     );
 
-    const { access_token, refresh_token, expires_in } = response.data;
+    // Log the entire response from Spotify for debugging
+    console.log("Spotify Token Response:", response.data);
+
+    const { access_token, refresh_token, token_type, expires_in } = response.data;
+
+    // Ensure all tokens and metadata are received
+    console.log("Spotify Access Token Received:", access_token);
+    console.log("Spotify Refresh Token Received:", refresh_token);
+    console.log("Spotify Token Type Received:", token_type);
+    console.log("Spotify Token Expiry (seconds):", expires_in);
 
     // Store tokens in session and track the expiration time
     req.session.spotifyAccessToken = access_token;
     req.session.spotifyRefreshToken = refresh_token;
-    req.session.spotifyTokenExpiration = Date.now() + (expires_in - 60) * 1000; // Store expiration time (subtracting 1 minute for safety)
-
-    console.log("Spotify Access Token Received:", access_token);
 
     // Preemptively refresh the access token before it expires
-    scheduleTokenRefresh(req.session.spotifyTokenExpiration);
 
     // Redirect back to frontend after successful login
     res.redirect("http://localhost:3000/createPlayList");
@@ -119,13 +133,18 @@ app.get("/api/home", verifyFirebaseToken, async (req, res) => {
 
   try {
     const response = await axios.get("https://api.spotify.com/v1/me", {
-      headers: { Authorization: `Bearer ${req.session.spotifyAccessToken}` },
+      headers: { 
+        Authorization: `Bearer ${req.session.spotifyAccessToken}`,
+        "Content-Type": "application/json"
+
+      },
     });
 
     res.json({
       message: "Welcome! You are authenticated with Firebase and Spotify.",
       user: req.user,
       spotifyAccessToken: req.session.spotifyAccessToken,
+      
     });
   } catch (error) {
     if (error.response?.status === 401) {
@@ -155,55 +174,34 @@ function generateRandomString(length) {
 }
 
 // Refresh Token Route
-async function refreshSpotifyToken(req) {
-  const refresh_token = req.session.spotifyRefreshToken;
-
-  if (!refresh_token) {
-    throw new Error("No refresh token found.");
-  }
-
+app.get('/refresh_token', async function(req, res) {
   try {
     const response = await axios.post(
-      "https://accounts.spotify.com/api/token",
+      'https://accounts.spotify.com/api/token',
       querystring.stringify({
-        grant_type: "refresh_token",
-        refresh_token: refresh_token,
+        grant_type: 'client_credentials'
       }),
       {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Basic " + Buffer.from(client_id + ":" + client_secret).toString("base64"),
-        },
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
+        }
       }
     );
 
-    const { access_token, refresh_token: new_refresh_token, expires_in } = response.data;
-
-    // Store the new access token and refresh token
-    req.session.spotifyAccessToken = access_token;
-    req.session.spotifyRefreshToken = new_refresh_token || refresh_token;
-    req.session.spotifyTokenExpiration = Date.now() + (expires_in - 60) * 1000; // Update expiration time
-
-    // Preemptively refresh the token again
-    scheduleTokenRefresh(req.session.spotifyTokenExpiration);
-
-    console.log("Spotify Access Token Refreshed:", access_token);
+    if (response.status === 200) {
+      var access_token = response.data.access_token;
+      res.send({
+        'access_token': access_token
+      });
+    } else {
+      res.status(response.status).send(response.data);
+    }
   } catch (error) {
-    console.error("Error refreshing Spotify token:", error.response?.data || error);
-    throw new Error("Failed to refresh Spotify token");
+    console.error("Error requesting Spotify token:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to get access token" });
   }
-}
-
-// Schedule the token refresh before expiration
-function scheduleTokenRefresh(expirationTime) {
-  const timeUntilRefresh = expirationTime - Date.now();
-  if (timeUntilRefresh > 0) {
-    setTimeout(async () => {
-      console.log("Refreshing Spotify token preemptively...");
-      await refreshSpotifyToken(req);
-    }, timeUntilRefresh);
-  }
-}
+});
 
 // Start Server
 app.listen(PORT, () => {
