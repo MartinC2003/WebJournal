@@ -186,13 +186,16 @@ app.get('/refresh_token', async function(req, res) {
 
     if (response.status === 200) {
       const access_token = response.data.access_token;
+      const refresh_token = response.data.refresh_token || req.session.refresh_token;
       
-      // Assign the new access token to the req object (e.g., saving it in session or request object)
-      req.session.spotifyAccessToken = access_token;  // You can store it directly in req or in session
+      // Store both the access_token and refresh_token in session
+      req.session.spotifyAccessToken = access_token;
+      req.session.spotifyRefreshToken = refresh_token; // Save the refresh token in session as well
 
-      // Send the access token back in the response
+      // Send both tokens back in the response
       res.send({
-        'access_token': access_token
+        access_token: access_token,
+        refresh_token: refresh_token
       });
     } else {
       res.status(response.status).send(response.data);

@@ -10,14 +10,14 @@
 
 function PlaylistCreatorService() {
 
-    //fetches user data using firebase token as a middleware
+    //fetches user data using spotifytoken 
     //goes to the /api/home endpoint 
-    const fetchSpotifyUserProfile = async (token) => {
+    const fetchSpotifyUserProfile = async (spotifyToken) => {
         try {
             const response = await fetch("https://api.spotify.com/v1/me", {
                 method: 'GET',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    "Authorization": `Bearer ${spotifyToken}`,
                     "Content-Type": "application/json"
                 }
             });
@@ -31,79 +31,84 @@ function PlaylistCreatorService() {
         }
     };
 
-    const checkSpotifyAuth = async (idToken, setSpotifyAuthenticated, setSpotifyToken, setMessage) => {
-        try {
-            const response = await fetch("http://localhost:8080/api/home", {
-                method: 'GET',
-                credentials: "include",
-                headers: {
-                    "Authorization": `Bearer ${idToken}`,
-                    "Content-Type": "application/json"
-                }
-            });
-    
-            const data = await response.json();
-            console.log("Server Response:", data);
-    
-            if (data.error === "Spotify not authenticated") {
-                setSpotifyAuthenticated(false);
-            } else if (data.error === "Spotify token expired. Please refresh the token.") {
-                console.log("Spotify token expired. Attempting to refresh...");
-    
-                try {
-                    // Attempt to refresh the token
-                    const newToken = await refreshSpotifyToken();
-                    
-                    if (newToken) {
-                        console.log("Token refreshed successfully:", newToken);
-                        setSpotifyToken(newToken);
-                        setSpotifyAuthenticated(true);
-                        setMessage("Spotify token refreshed successfully.");
-                    } else {
-                        console.log("Failed to refresh Spotify token.");
-                        setSpotifyAuthenticated(false);
-                        setMessage("Spotify token expired. Please log in again.");
-                    }
-                } catch (refreshError) {
-                    console.error("Error refreshing Spotify token:", refreshError);
-                    setSpotifyAuthenticated(false);
-                    setMessage("Spotify token expired. Please log in again.");
-                }
-    
-            } else {
-                setSpotifyAuthenticated(true);
-                setSpotifyToken(data.spotifyAccessToken);
-                setMessage(data.message);
-            }
-        } catch (error) {
-            console.error("Error checking Spotify authentication:", error);
-            setMessage("Error communicating with server.");
-        }
-    };
-    
+
     const refreshSpotifyToken = async () => {
         try {
             const response = await fetch("http://localhost:8080/refresh_token", { method: "GET" });
             if (!response.ok) throw new Error("Failed to refresh token");
     
             const data = await response.json();
-            
+    
             if (data.access_token) {
-                setSpotifyToken(data.access_token); // Update state after receiving the token
+                return new Promise((resolve) => {
+                    resolve(data.access_token);
+                    setSpotifyToken(data.access_token); // Update access token state
+                    if (data.refresh_token) {
+                        setSpotifyRefreshToken(data.refresh_token); // Update refresh token state
+                    }
+                });
             } else {
                 console.error("No access token received.");
+                return null;
             }
-    
-            return data.access_token; // Return the token if needed elsewhere
         } catch (error) {
             console.error("Error refreshing Spotify token:", error);
-            throw error;
+            return null;
         }
     };
     
+    const getEntries = async (month, year) => {
+        const { startDate, endDate } = getMonthRange(month, year);
+        const entriesRef = collection(db, "DairyEntries");
+        const q = query(entriesRef, where("date", ">=", startDate), where("date", "<=", endDate));
+        
+        try {
+            const querySnapshot = await getDocs(q);
+            let entries = [];
+            querySnapshot.forEach((doc) => {
+                entries.push({ id: doc.id, ...doc.data() });
+            });
+            console.log("Entries found:", entries);
+            return entries;
+        } catch (error) {
+            console.error("Error fetching entries:", error);
+            return [];
+        }
+    };
 
 
-    return { fetchSpotifyUserProfile, checkSpotifyAuth, refreshSpotifyToken };
+    const getTracks = async (month, year, mood) => {
+        const entries = await getEntries(month, year);
+        let tracks = [];
+
+
+        for (const entry of entries) {
+            if (entry.mood === mood) {
+                const tracksRef = collection(db, "DairyEntries", entry.id, "tracks");
+                const trackDocs = await getDocs(tracksRef);
+                trackDocs.forEach((trackDoc) => {
+                    tracks.push(trackDoc.data());
+                });
+            }
+        }
+
+
+        if (tracks.length > 10) {
+            tracks = tracks.sort(() => Math.random() - 0.5).slice(0, 10);
+        }
+        
+        if (tracks.length === 0) {
+            console.error("No tracks found for the selected mood.");
+            return null;
+        }
+        
+        console.log("Selected tracks:", tracks);
+        return tracks;
+    };
+
+    
+
+    return { fetchSpotifyUserProfile, refreshSpotifyToken };
 }
 
 export default PlaylistCreatorService;

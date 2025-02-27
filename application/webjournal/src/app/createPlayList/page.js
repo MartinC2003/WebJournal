@@ -2,12 +2,10 @@
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import PlaylistCreatorService from "./playlistcreator-service";
 import SpotifyAuth from "./spotify-auth";
 import SpotifyRequest from "./spotify-request";
 
 function CreatePlaylistHome() {
-  const { checkSpotifyAuth, refreshSpotifyToken } = PlaylistCreatorService();
   const [message, setMessage] = useState("Loading");
   const [user, setUser] = useState(null);
   const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
@@ -36,7 +34,7 @@ function CreatePlaylistHome() {
           if (response.ok) {
             setSpotifyAuthenticated(true);
             setSpotifyToken(data.spotifyAccessToken);
-            setRefreshToken(data.spotifyRefreshToken);  
+            setRefreshToken(data.spotifyRefreshToken);
             console.log("Spotify Access Token:", data.spotifyAccessToken);
             console.log("Spotify Refresh Token:", data.spotifyRefreshToken);
             setMessage("Authenticated with Firebase and Spotify.");
@@ -57,17 +55,21 @@ function CreatePlaylistHome() {
   
     return () => unsubscribe();
   }, []);
-  
 
-  if (user && !spotifyAuthenticated) {
-    return <SpotifyRequest />;
+  if (!user) {
+    return <div>{message}</div>;
   }
 
-  if (user && spotifyAuthenticated) {
-    return <SpotifyAuth message={message} token={spotifyToken} refreshSpotifyToken={refreshToken} />;
-  }
-
-  return <div>{message}</div>;
+  return spotifyAuthenticated ? (
+    <SpotifyAuth
+      message={message}
+      spotifyToken={spotifyToken}
+      refreshToken={refreshToken}
+      setMessage={setMessage}
+    />
+  ) : (
+    <SpotifyRequest />
+  );
 }
 
 export default CreatePlaylistHome;

@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import styles from "../styles/createplaylist.module.css";
 import PlaylistCreatorService from "./playlistcreator-service";
 
-function SpotifyAuth({ token }) {
+function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpotifyToken }) {
     const [userProfile, setUserProfile] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
-    const { fetchSpotifyUserProfile, refreshSpotifyToken, createPlaylist } = PlaylistCreatorService(token);
-    const [mood, setMood] = useState("Happy");  
-    const [month, setMonth] = useState("January"); 
-    const [year, setYear] = useState(new Date().getFullYear()); 
-    const [moodMessage, setMoodMessage] = useState(""); 
+    const { fetchSpotifyUserProfile,  createPlaylist, refreshSpotifyToken } = PlaylistCreatorService(spotifyToken);
+    const [mood, setMood] = useState("Happy");
+    const [month, setMonth] = useState("January");
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [moodMessage, setMoodMessage] = useState("");
 
     const moodDescriptions = {
         "Happy": "An uplifting playlist full of positive energy, perfect for celebrating or enjoying a sunny day.",
@@ -28,19 +27,42 @@ function SpotifyAuth({ token }) {
         "Disgusted": "/createplaylist/disgusted-albumcv-plc.png"
     };
 
-    //fetches user data from Spotify 
+    // Fetches user data from Spotify
     useEffect(() => {
-        if (token) {
-            fetchSpotifyUserProfile(token)
+        if (spotifyToken) {
+            fetchSpotifyUserProfile(spotifyToken)
                 .then((data) => {
                     console.log("Fetched Spotify Profile:", data);
+                    console.log("Spotify Access Token:", spotifyToken);
+                    console.log("Spotify Refresh Token:", refreshToken);
                     setUserProfile(data);
+                    
                 })
-                .catch((error) => {
+                .catch(async (error) => {
                     console.error("Error fetching Spotify profile:", error);
+    
+                    // Attempt to refresh token if it's expired
+                    const newToken = await refreshSpotifyToken();
+                    if (newToken) {
+                        setSpotifyToken(newToken);
+                        setMessage("Spotify token refreshed successfully.");
+    
+                        fetchSpotifyUserProfile(newToken)
+                            .then((data) => {
+                                setUserProfile(data);
+                            })
+                            .catch((err) => {
+                                console.error("Error fetching profile after refresh:", err);
+                                setSpotifyAuthenticated(false);
+                                setMessage("Failed to fetch profile after refresh. Please log in again.");
+                            });
+                    } else {
+                        setSpotifyAuthenticated(false);
+                        setMessage("Spotify token expired. Please log in again.");
+                    }
                 });
         }
-    }, [token]);
+    }, [spotifyToken]);
     
 
     useEffect(() => {
