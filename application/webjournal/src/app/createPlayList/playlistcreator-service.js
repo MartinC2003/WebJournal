@@ -47,11 +47,29 @@ function PlaylistCreatorService() {
     
             if (data.error === "Spotify not authenticated") {
                 setSpotifyAuthenticated(false);
-            } else if (data.error === "Token expired") {
-                console.log("Spotify token expired.");
-                // Set authenticated to false if the token expired
-                setSpotifyAuthenticated(false);
-                setMessage("Spotify token expired. Please refresh the token.");
+            } else if (data.error === "Spotify token expired. Please refresh the token.") {
+                console.log("Spotify token expired. Attempting to refresh...");
+    
+                try {
+                    // Attempt to refresh the token
+                    const newToken = await refreshSpotifyToken();
+                    
+                    if (newToken) {
+                        console.log("Token refreshed successfully:", newToken);
+                        setSpotifyToken(newToken);
+                        setSpotifyAuthenticated(true);
+                        setMessage("Spotify token refreshed successfully.");
+                    } else {
+                        console.log("Failed to refresh Spotify token.");
+                        setSpotifyAuthenticated(false);
+                        setMessage("Spotify token expired. Please log in again.");
+                    }
+                } catch (refreshError) {
+                    console.error("Error refreshing Spotify token:", refreshError);
+                    setSpotifyAuthenticated(false);
+                    setMessage("Spotify token expired. Please log in again.");
+                }
+    
             } else {
                 setSpotifyAuthenticated(true);
                 setSpotifyToken(data.spotifyAccessToken);
@@ -63,20 +81,26 @@ function PlaylistCreatorService() {
         }
     };
     
-
     const refreshSpotifyToken = async () => {
         try {
             const response = await fetch("http://localhost:8080/refresh_token", { method: "GET" });
             if (!response.ok) throw new Error("Failed to refresh token");
-
+    
             const data = await response.json();
-            return data.access_token; // Ensure this is returned
+            
+            if (data.access_token) {
+                setSpotifyToken(data.access_token); // Update state after receiving the token
+            } else {
+                console.error("No access token received.");
+            }
+    
+            return data.access_token; // Return the token if needed elsewhere
         } catch (error) {
             console.error("Error refreshing Spotify token:", error);
             throw error;
         }
     };
-
+    
 
 
     return { fetchSpotifyUserProfile, checkSpotifyAuth, refreshSpotifyToken };

@@ -36,7 +36,7 @@ function CreatePlaylistHome() {
           if (response.ok) {
             setSpotifyAuthenticated(true);
             setSpotifyToken(data.spotifyAccessToken);
-            setRefreshToken(data.spotifyRefreshToken); // Store refresh token
+            setRefreshToken(data.spotifyRefreshToken);  
             console.log("Spotify Access Token:", data.spotifyAccessToken);
             console.log("Spotify Refresh Token:", data.spotifyRefreshToken);
             setMessage("Authenticated with Firebase and Spotify.");
