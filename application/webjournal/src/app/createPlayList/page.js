@@ -19,25 +19,26 @@ function CreatePlaylistHome() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-
+  
         try {
-          // Get the Firebase ID Token
           const idToken = await currentUser.getIdToken();
-
-          // Call backend to check authentication & get Spotify status
           const response = await fetch("http://localhost:8080/api/home", {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${idToken}`, // Pass the Firebase ID Token
+              Authorization: `Bearer ${idToken}`,
             },
-            credentials: "include", // Ensures cookies (if used) are sent
+            credentials: "include",
           });
-
+  
           const data = await response.json();
-
+          console.log("Server Response Data:", data);
+  
           if (response.ok) {
             setSpotifyAuthenticated(true);
             setSpotifyToken(data.spotifyAccessToken);
+            setRefreshToken(data.spotifyRefreshToken); // Store refresh token
+            console.log("Spotify Access Token:", data.spotifyAccessToken);
+            console.log("Spotify Refresh Token:", data.spotifyRefreshToken);
             setMessage("Authenticated with Firebase and Spotify.");
           } else {
             setSpotifyAuthenticated(false);
@@ -53,9 +54,10 @@ function CreatePlaylistHome() {
         setMessage("User not authenticated");
       }
     });
-
+  
     return () => unsubscribe();
   }, []);
+  
 
   if (user && !spotifyAuthenticated) {
     return <SpotifyRequest />;

@@ -10,6 +10,8 @@
 
 function PlaylistCreatorService() {
 
+    //fetches user data using firebase token as a middleware
+    //goes to the /api/home endpoint 
     const fetchSpotifyUserProfile = async (token) => {
         try {
             const response = await fetch("https://api.spotify.com/v1/me", {
@@ -39,15 +41,17 @@ function PlaylistCreatorService() {
                     "Content-Type": "application/json"
                 }
             });
-
+    
             const data = await response.json();
             console.log("Server Response:", data);
-
+    
             if (data.error === "Spotify not authenticated") {
                 setSpotifyAuthenticated(false);
             } else if (data.error === "Token expired") {
-                console.log("Spotify token expired. Refreshing...");
-                await refreshSpotifyToken(idToken, setSpotifyToken, setSpotifyAuthenticated, setMessage);
+                console.log("Spotify token expired.");
+                // Set authenticated to false if the token expired
+                setSpotifyAuthenticated(false);
+                setMessage("Spotify token expired. Please refresh the token.");
             } else {
                 setSpotifyAuthenticated(true);
                 setSpotifyToken(data.spotifyAccessToken);
@@ -58,6 +62,7 @@ function PlaylistCreatorService() {
             setMessage("Error communicating with server.");
         }
     };
+    
 
     const refreshSpotifyToken = async () => {
         try {

@@ -28,6 +28,7 @@ app.use(
     secret: "your-secret-key",
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: false },
   })
 );
 
@@ -56,6 +57,7 @@ const verifyFirebaseToken = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized (Invalid Token)" });
   }
 };
+
 // Spotify Login Route
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
@@ -126,6 +128,7 @@ app.get("/callback", async (req, res) => {
 });
 
 // Protected API Route (Requires Firebase & Spotify Auth)
+//Runs after callback
 app.get("/api/home", verifyFirebaseToken, async (req, res) => {
   if (!req.session.spotifyAccessToken) {
     return res.status(401).json({ error: "Spotify not authenticated" });
@@ -136,7 +139,6 @@ app.get("/api/home", verifyFirebaseToken, async (req, res) => {
       headers: { 
         Authorization: `Bearer ${req.session.spotifyAccessToken}`,
         "Content-Type": "application/json"
-
       },
     });
 
@@ -144,24 +146,17 @@ app.get("/api/home", verifyFirebaseToken, async (req, res) => {
       message: "Welcome! You are authenticated with Firebase and Spotify.",
       user: req.user,
       spotifyAccessToken: req.session.spotifyAccessToken,
-      
+      spotifyRefreshToken: req.session.spotifyRefreshToken
     });
   } catch (error) {
     if (error.response?.status === 401) {
-      console.log("Spotify token expired, attempting to refresh...");
-
-      try {
-        await refreshSpotifyToken(req);
-        res.redirect("/api/home");
-      } catch (refreshError) {
-        console.error("Failed to refresh token:", refreshError);
-        res.status(500).json({ error: "Failed to refresh Spotify token" });
-      }
+      return res.status(401).json({ error: "Spotify token expired. Please refresh the token." });
     } else {
       res.status(500).json({ error: "Failed to retrieve Spotify user data" });
     }
   }
 });
+
 
 // Function to generate random state string
 function generateRandomString(length) {
@@ -190,7 +185,12 @@ app.get('/refresh_token', async function(req, res) {
     );
 
     if (response.status === 200) {
-      var access_token = response.data.access_token;
+      const access_token = response.data.access_token;
+      
+      // Assign the new access token to the req object (e.g., saving it in session or request object)
+      req.session.spotifyAccessToken = access_token;  // You can store it directly in req or in session
+
+      // Send the access token back in the response
       res.send({
         'access_token': access_token
       });
@@ -202,6 +202,7 @@ app.get('/refresh_token', async function(req, res) {
     res.status(500).json({ error: "Failed to get access token" });
   }
 });
+
 
 // Start Server
 app.listen(PORT, () => {

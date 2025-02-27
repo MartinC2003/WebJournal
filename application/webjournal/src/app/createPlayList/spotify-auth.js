@@ -28,6 +28,7 @@ function SpotifyAuth({ token }) {
         "Disgusted": "/createplaylist/disgusted-albumcv-plc.png"
     };
 
+    //fetches user data from Spotify 
     useEffect(() => {
         if (token) {
             fetchSpotifyUserProfile(token)
@@ -40,18 +41,6 @@ function SpotifyAuth({ token }) {
                 });
         }
     }, [token]);
-    
-    useEffect(() => {
-        if (!refreshToken) {
-            refreshSpotifyToken()
-                .then((newToken) => {
-                    setRefreshToken(newToken);
-                })
-                .catch((error) => {
-                    console.error("Error refreshing Spotify token:", error);
-                });
-        }
-    }, []);  
     
 
     useEffect(() => {
