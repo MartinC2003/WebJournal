@@ -13,6 +13,8 @@ const PORT = 8080;
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+
+
 const {getAuth} = require("firebase-admin/auth") 
 
 // Debug logs to check if .env values are loaded
@@ -61,7 +63,8 @@ const verifyFirebaseToken = async (req, res, next) => {
 // Spotify Login Route
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
-  const scope = "user-read-private user-read-email";
+  const scope =
+    "user-read-private user-read-email playlist-modify-private playlist-modify-public";
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
@@ -74,6 +77,7 @@ app.get("/login", (req, res) => {
       })
   );
 });
+
 
 // Spotify Callback Route
 //Runs after Login 
@@ -91,41 +95,34 @@ app.get("/callback", async (req, res) => {
         grant_type: "authorization_code",
         code: code,
         redirect_uri: redirect_uri,
+        client_id: client_id,
+        client_secret: client_secret,
       }),
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization:
-            "Basic " +
-            Buffer.from(client_id + ":" + client_secret).toString("base64"),
         },
       }
     );
 
-    // Log the entire response from Spotify for debugging
     console.log("Spotify Token Response:", response.data);
 
-    const { access_token, refresh_token, token_type, expires_in } = response.data;
+    const { access_token, refresh_token, expires_in, scope } = response.data;
 
-    // Ensure all tokens and metadata are received
-    console.log("Spotify Access Token Received:", access_token);
-    console.log("Spotify Refresh Token Received:", refresh_token);
-    console.log("Spotify Token Type Received:", token_type);
-    console.log("Spotify Token Expiry (seconds):", expires_in);
-
-    // Store tokens in session and track the expiration time
+    // Store tokens in session
     req.session.spotifyAccessToken = access_token;
     req.session.spotifyRefreshToken = refresh_token;
+    req.session.spotifyScopes = scope; // Store the granted scopes
 
-    // Preemptively refresh the access token before it expires
+    console.log("Granted Scopes:", scope);
 
-    // Redirect back to frontend after successful login
     res.redirect("http://localhost:3000/createPlayList");
   } catch (error) {
     console.error("Error getting Spotify token:", error.response?.data || error);
     res.status(500).json({ error: "Failed to get Spotify access token" });
   }
 });
+
 
 // Protected API Route (Requires Firebase & Spotify Auth)
 //Runs after callback
@@ -204,6 +201,11 @@ app.get('/refresh_token', async function(req, res) {
     console.error("Error requesting Spotify token:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to get access token" });
   }
+});
+
+// Endpoint to get LastFM API Key
+app.get("/getLastFMKey", ( res) => {
+  res.json({ lastfm_key: lastfm_key });
 });
 
 
