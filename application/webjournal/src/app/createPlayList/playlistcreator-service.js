@@ -3,6 +3,7 @@ import axios from "axios";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 function PlaylistCreatorService() {
+  
   // Fetches user data from Spotify using the provided token.
   const lastfm_key = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
 
@@ -28,7 +29,7 @@ function PlaylistCreatorService() {
 
   // Refreshes the Spotify token.
   // (This still calls your refresh token endpoint at localhost:8080;
-  // you can modify this if you want a different mechanism.)
+  // Do not use 
   const refreshSpotifyToken = async () => {
     try {
       const response = await fetch("http://localhost:8080/refresh_token", {
@@ -121,131 +122,188 @@ function PlaylistCreatorService() {
     return tracks;
   }
   
+  //Uses lastfm api to find similar tracks, similar artists and similar albums to always generate a unique playlist.
+  //Finds similar tracks, then similar artists and continues until it reaches 200 unique tracks.
+  //If the limit has not been reached it starts looking for tracks based on similar albums. 
   async function getSimilarTracks(tracks) {
     try {
-      const recommendedTrackIds = new Set();
+      const recommendedTracks = new Set();
       let queue = [...tracks];
       const processed = new Set();
   
-      while (queue.length > 0 && recommendedTrackIds.size < 75) {
+      while (queue.length > 0 && recommendedTracks.size < 200) {
         const { artist, song } = queue.shift();
+        const trackKey = `${artist.toLowerCase()} - ${song.toLowerCase()}`;
   
-        if (processed.has(`${artist} - ${song}`)) continue;
-        processed.add(`${artist} - ${song}`);
+        if (processed.has(trackKey)) continue;
+        processed.add(trackKey);
   
-        // Construct the LastFM URL for similar tracks
         let similarTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=track.getSimilar&track=${encodeURIComponent(song)}&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&autocorrect=1&limit=10`;
   
-        console.log(`Sending request for: ${similarTracksUrl}`);
+        console.log(`Fetching similar tracks for: ${artist} - ${song}`);
   
         try {
           const response = await axios.get(similarTracksUrl);
           let similarTracks = response.data.similartracks?.track || [];
   
           if (similarTracks.length === 0) {
-            console.log(`No similar tracks found for ${artist} - ${song}, attempting autocorrect...`);
+            console.log(`No similar tracks found, fetching similar artists for: ${artist}`);
   
-            // If no similar tracks are found, try searching again with autocorrected parameters
-            const autocorrectedUrl = `http://ws.audioscrobbler.com/2.0/?method=track.getSimilar&track=${encodeURIComponent(song)}&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&autocorrect=1&limit=10`;
-            const autocorrectedResponse = await axios.get(autocorrectedUrl);
-            similarTracks = autocorrectedResponse.data.similartracks?.track || [];
+            const similarArtistsUrl = `http://ws.audioscrobbler.com/2.0/?method=artist.getSimilar&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&limit=5`;
+            const artistsResponse = await axios.get(similarArtistsUrl);
+            const similarArtists = artistsResponse.data.similarartists?.artist || [];
   
-            if (similarTracks.length === 0) {
-              console.log(`Still no similar tracks after autocorrection for ${artist} - ${song}, moving to next track...`);
+            for (const similarArtist of similarArtists) {
+              const artistName = similarArtist.name;
+              const topTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=artist.getTopTracks&artist=${encodeURIComponent(artistName)}&api_key=${lastfm_key}&format=json&limit=5`;
   
-              // No similar tracks found, attempt to fetch similar artists and their top tracks
-              const similarArtistsUrl = `http://ws.audioscrobbler.com/2.0/?method=artist.getSimilar&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&limit=5`;
+              try {
+                const topTracksResponse = await axios.get(topTracksUrl);
+                const topTracks = topTracksResponse.data.toptracks?.track || [];
   
-              const artistsResponse = await axios.get(similarArtistsUrl);
-              const similarArtists = artistsResponse.data.similarartists?.artist || [];
+                for (const topTrack of topTracks) {
+                  if (topTrack.name && topTrack.artist?.name) {
+                    const trackObj = { artist: topTrack.artist.name, song: topTrack.name };
+                    const trackKey = `${trackObj.artist.toLowerCase()} - ${trackObj.song.toLowerCase()}`;
   
-              for (const similarArtist of similarArtists) {
-                const artistName = similarArtist.name;
-  
-                // Fetch top tracks for each similar artist
-                const topTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=artist.getTopTracks&artist=${encodeURIComponent(artistName)}&api_key=${lastfm_key}&format=json&limit=5`;
-                try {
-                  const topTracksResponse = await axios.get(topTracksUrl);
-                  const topTracks = topTracksResponse.data.toptracks?.track || [];
-  
-                  // Iterate through the top tracks of the similar artist
-                  topTracks.forEach((topTrack) => {
-                    if (topTrack.name && topTrack.artist?.name && !processed.has(`${topTrack.artist.name} - ${topTrack.name}`)) {
-                      recommendedTrackIds.add({ artist: topTrack.artist.name, song: topTrack.name });
-                      queue.push({ artist: topTrack.artist.name, song: topTrack.name });
+                    if (!processed.has(trackKey) && recommendedTracks.size < 200) {
+                      recommendedTracks.add(JSON.stringify(trackObj));
+                      queue.push(trackObj);
                     }
-                  });
-                } catch (error) {
-                  console.error(`Error fetching top tracks for similar artist ${artistName}:`, error);
+                  }
                 }
+              } catch (error) {
+                console.error(`Error fetching top tracks for artist ${artistName}:`, error);
               }
             }
           }
   
-          // Process similar tracks if available
-          similarTracks.slice(0, 10).forEach(({ name, artist }) => {
-            if (name && artist?.name && !processed.has(`${artist.name} - ${name}`)) {
-              recommendedTrackIds.add({ artist: artist.name, song: name });
-              queue.push({ artist: artist.name, song: name });
+          for (const track of similarTracks.slice(0, 10)) {
+            if (track.name && track.artist?.name) {
+              const trackObj = { artist: track.artist.name, song: track.name };
+              const trackKey = `${trackObj.artist.toLowerCase()} - ${trackObj.song.toLowerCase()}`;
+  
+              if (!processed.has(trackKey) && recommendedTracks.size < 200) {
+                recommendedTracks.add(JSON.stringify(trackObj));
+                queue.push(trackObj);
+              }
             }
-          });
+          }
         } catch (error) {
           console.error(`Error fetching similar tracks for ${artist} - ${song}:`, error);
         }
       }
   
-      return Array.from(recommendedTrackIds).slice(0, 75);
-    } catch (error) {
-      console.error("Error fetching LastFM API key:", error);
-    }
-  }
+      // If 200 tracks haven't been reached yet, start looking for similar albums**
+      if (recommendedTracks.size < 200) {
+        console.log("Switching to album-based recommendations...");
+        const tempTracks = Array.from(recommendedTracks).map(JSON.parse);
   
-// For each track from the diary, search Spotify’s API to extract a track ID.
-async function searchTracks(tracks, spotifyToken) {
-  console.log("Spotify Access Token:", spotifyToken);
-  const spotifyTrackIds = [];
-
-  // Loop through all tracks (diary tracks + Last.fm recommended tracks)
-  for (const track of tracks) {
-    const artist = track.artist.trim();
-    const song = track.song.trim();
-
-    console.log(`Searching for track: ${artist} - ${song}`);
-
-    // Fix query encoding (leave `artist:` and `track:` unencoded)
-    const queryStr = `artist:${encodeURIComponent(artist)} track:${encodeURIComponent(song)}`;
-
-    // Add market and pagination
-    const url = `https://api.spotify.com/v1/search?q=${queryStr}&type=track&market=from_token&limit=20&offset=0`;
-
-    try {
-      const response = await axios.get(url, {
-        headers: { 
-          Authorization: `Bearer ${spotifyToken}`, 
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = response.data;
-      if (data.tracks && data.tracks.items.length > 0) {
-        let selectedTrack = data.tracks.items[0];
-        if (selectedTrack?.id) {
-          console.log(`Found track id: ${selectedTrack.id} for ${artist} - ${song}`);
-          spotifyTrackIds.push(selectedTrack.id);
+        for (const { artist, song } of tempTracks) {
+          if (recommendedTracks.size >= 200) break;
+  
+          const albumsUrl = `http://ws.audioscrobbler.com/2.0/?method=album.search&album=${encodeURIComponent(song)}&api_key=${lastfm_key}&format=json&limit=5`;
+  
+          try {
+            const albumsResponse = await axios.get(albumsUrl);
+            const albums = albumsResponse.data.results.albummatches?.album || [];
+  
+            for (const album of albums) {
+              console.log(`Fetching tracks from album: ${album.name} by ${album.artist}`);
+  
+              const albumTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=${encodeURIComponent(album.artist)}&album=${encodeURIComponent(album.name)}&api_key=${lastfm_key}&format=json`;
+              try {
+                const albumTracksResponse = await axios.get(albumTracksUrl);
+                const albumTracks = albumTracksResponse.data.album?.tracks?.track || [];
+  
+                if (albumTracks.length > 0) {
+                  // Shuffle album tracks and select two
+                  const shuffledTracks = albumTracks.sort(() => 0.5 - Math.random()).slice(0, 2);
+  
+                  for (const albumTrack of shuffledTracks) {
+                    if (albumTrack.name) {
+                      const trackObj = { artist: album.artist, song: albumTrack.name };
+                      const trackKey = `${trackObj.artist.toLowerCase()} - ${trackObj.song.toLowerCase()}`;
+  
+                      if (!processed.has(trackKey) && recommendedTracks.size < 200) {
+                        console.log(`Adding track from album: ${trackObj.song} by ${trackObj.artist}`);
+                        recommendedTracks.add(JSON.stringify(trackObj));
+                      }
+                    }
+                  }
+                }
+              } catch (error) {
+                console.error(`Error fetching album tracks for ${album.name} by ${album.artist}:`, error);
+              }
+            }
+          } catch (error) {
+            console.error(`Error fetching similar albums for ${song}:`, error);
+          }
         }
       }
+  
+      let trackArray = Array.from(recommendedTracks).map(JSON.parse);
+      console.log(`Collected ${trackArray.length} unique tracks.`);
+      return trackArray;
     } catch (error) {
-      console.error(`Error searching for track ${artist} - ${song}:`, error.response?.data || error.message);
+      console.error("Error fetching LastFM API key:", error);
+      return [];
     }
   }
-
-  if (spotifyTrackIds.length === 0) throw new Error("No Spotify tracks found.");
-
   
-  return [...new Set(spotifyTrackIds)];
-}
+  
+  //First searches all 200 tracks on spotify 
+  //Chooses 50 random tracks from the array
+  //Those tracks are added to the playlist
+  async function searchTracks(tracks, spotifyToken) {
+    console.log("Spotify Access Token:", spotifyToken);
+  
+    const foundTracks = [];
+  
+    for (const track of tracks) {
+      const artist = track.artist.trim();
+      const song = track.song.trim();
+  
+      console.log(`Searching for track: ${artist} - ${song}`);
+  
+      const queryStr = `artist:${encodeURIComponent(artist)} track:${encodeURIComponent(song)}`;
+      const url = `https://api.spotify.com/v1/search?q=${queryStr}&type=track&market=from_token&limit=20&offset=0`;
+  
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${spotifyToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        const data = response.data;
+        if (data.tracks && data.tracks.items.length > 0) {
+          let selectedTrack = data.tracks.items[0];
+          if (selectedTrack?.id) {
+            console.log(`Found track ID: ${selectedTrack.id} for ${artist} - ${song}`);
+            foundTracks.push(selectedTrack.id);
+          }
+        }
+      } catch (error) {
+        console.error(`Error searching for track ${artist} - ${song}:`, error.response?.data || error.message);
+      }
+    }
+  
+    if (foundTracks.length === 0) throw new Error("No Spotify tracks found.");
+  
+    // Shuffle the found tracks using Fisher-Yates algorithm
+    for (let i = foundTracks.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [foundTracks[i], foundTracks[j]] = [foundTracks[j], foundTracks[i]];
+    }
+  
+    // Select exactly 50 unique tracks
+    return foundTracks.slice(0, 50);
+  }
+  
 
-function uploadPlaylistImage(playlistId, spotifyToken, playListImage) {
+async function uploadPlaylistImage(playlistId, spotifyToken, playListImage) {
   fetch(`https://api.spotify.com/v1/playlists/${playlistId}/images`, {
     method: 'PUT',
     headers: {
