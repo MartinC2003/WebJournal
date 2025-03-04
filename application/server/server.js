@@ -64,7 +64,7 @@ const verifyFirebaseToken = async (req, res, next) => {
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
   const scope =
-    "user-read-private user-read-email playlist-modify-private playlist-modify-public";
+    "user-read-private user-read-email playlist-modify-private playlist-modify-public ugc-image-upload";  // Added ugc-image-upload scope
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
@@ -77,6 +77,7 @@ app.get("/login", (req, res) => {
       })
   );
 });
+
 
 
 // Spotify Callback Route

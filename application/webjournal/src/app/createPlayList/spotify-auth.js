@@ -12,6 +12,7 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
   const [year, setYear] = useState(new Date().getFullYear());
   const [moodMessage, setMoodMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [playListImage, setPlayListImage] = useState("");  
 
   const moodDescriptions = {
     "Happy": "An uplifting playlist full of positive energy, perfect for celebrating or enjoying a sunny day.",
@@ -22,12 +23,13 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
   };
 
   const moodImages = {
-    "Happy": "/createplaylist/happy-albumcv-plc.png",
-    "Sad": "/createplaylist/sad-albumcv-plc.png",
-    "Angry": "/createplaylist/angry-albumcv-plc.png",
-    "Scared": "/createplaylist/scared-albumcv-plc.png",
-    "Disgusted": "/createplaylist/disgusted-albumcv-plc.png"
+    "Happy": "/createplaylist/happy-albumcv-plc.jpg",
+    "Sad": "/createplaylist/sad-albumcv-plc.jpg",
+    "Angry": "/createplaylist/angry-albumcv-plc.jpg",
+    "Scared": "/createplaylist/scared-albumcv-plc.jpg",
+    "Disgusted": "/createplaylist/disgusted-albumcv-plc.jpg"
   };
+
 
   // Fetches user data from Spotify
   useEffect(() => {
@@ -64,12 +66,30 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
     }
   }, [spotifyToken]);
 
+  const fetchAndSetMoodImage = async () => {
+    const imagePath = moodImages[mood];
+    console.log("Fetching Base64 for:", imagePath);
+
+    const response = await fetch(`/api/getBase64?imagePath=${encodeURIComponent(imagePath)}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Base64 image for ${mood}`);
+    }
+
+    const data = await response.json();
+    console.log("Fetched Base64 Image:", data.base64);
+    setPlayListImage(data.base64);
+  };
+
   useEffect(() => {
     setMoodMessage(moodDescriptions[mood]);
+    fetchAndSetMoodImage();  
   }, [mood]);
 
+
   const handleCreatePlaylist = async () => {
-    console.log("Spotify Token inside handleCreatePlaylist:", spotifyToken);  
+    console.log("Spotify Token inside handleCreatePlaylist:", spotifyToken);
+    console.log("Selected Mood:", mood);
+    console.log("Playlist image", playListImage)
     if (!userProfile) {
       setMessage("User profile not loaded yet.");
       return;
@@ -80,10 +100,12 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
       const playlistId = await createPlaylist({
         selectedDateRange: { month, year },
         selectedMood: mood,
-        spotifyToken,  // Pass token here
+        spotifyToken,
         playlistDescription: moodDescriptions[mood],
-        userProfileId
+        userProfileId,
+        playListImage,  
       });
+  
       setMessage(`Playlist created successfully! Playlist ID: ${playlistId}`);
     } catch (error) {
       console.error("Error creating playlist:", error);
@@ -92,9 +114,6 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
       setLoading(false);
     }
   };
-  
-  
-
   return (
     <div className={styles.app}>
       <div className={styles.pagecontentContainer}>
