@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { UserAuth } from '../../api/AuthContext';
 import styles from '../styles/viewentry.module.css';
 import BasicDateCalendar from './calendar';
-import ViewEntry from './view-entry';
+import Entries from './entries';
 
 const ViewEntryPage = () => {
   const { user } = UserAuth();
@@ -115,7 +115,7 @@ const ViewEntryPage = () => {
               mode={mode}
             />
           </div>
-          <ViewEntry selectedDates={selectedDates} entries={entries} />
+          <Entries selectedDates={selectedDates} entries={entries} />
         </div>
       </div>
     </div>

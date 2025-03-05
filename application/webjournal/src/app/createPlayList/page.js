@@ -5,23 +5,56 @@ import { useEffect, useState } from "react";
 import SpotifyAuth from "./spotify-auth";
 import SpotifyRequest from "./spotify-request";
 
-//remove the token refresh from useffect
-//remove the message too  
 function CreatePlaylistHome() {
-  const [message, setMessage] = useState("Loading");
-  const [user, setUser] = useState(null);
   const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
+  const [refreshTimeout, setRefreshTimeout] = useState(null); // Store timeout reference
+
+  // Function to refresh Spotify token
+  const refreshSpotifyToken = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/refresh_token", {
+        method: "GET",
+      });
+      if (!response.ok) throw new Error("Failed to refresh token");
+
+      const data = await response.json();
+      if (data.access_token) {
+        return data;
+      } else {
+        console.error("No access token received.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error refreshing Spotify token:", error);
+      return null;
+    }
+  };
+
+  // Function to schedule token refresh
+  const scheduleTokenRefresh = (expiresIn) => {
+    if (refreshTimeout) clearTimeout(refreshTimeout); // Clear existing timeout
+
+    const timeout = setTimeout(async () => {
+      const newTokenData = await refreshSpotifyToken();
+      if (newTokenData) {
+        setSpotifyToken(newTokenData.access_token);
+        scheduleTokenRefresh(newTokenData.expires_in); // Schedule next refresh
+      }
+    }, (expiresIn - 60) * 1000); // Refresh 60 seconds before expiration
+
+    setRefreshTimeout(timeout);
+  };
 
   useEffect(() => {
     const auth = getAuth();
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
-  
         try {
           const idToken = await currentUser.getIdToken();
+
           const response = await fetch("http://localhost:8080/api/home", {
             method: "GET",
             headers: {
@@ -29,46 +62,43 @@ function CreatePlaylistHome() {
             },
             credentials: "include",
           });
-  
+
           const data = await response.json();
           console.log("Server Response Data:", data);
-  
+
           if (response.ok) {
             setSpotifyAuthenticated(true);
             setSpotifyToken(data.spotifyAccessToken);
             setRefreshToken(data.spotifyRefreshToken);
             console.log("Spotify Access Token:", data.spotifyAccessToken);
             console.log("Spotify Refresh Token:", data.spotifyRefreshToken);
-            setMessage("Authenticated with Firebase and Spotify.");
+            console.log("Expires In:", data.expiresIn);
+
+            // Schedule token refresh
+            scheduleTokenRefresh(data.expiresIn);
           } else {
             setSpotifyAuthenticated(false);
-            setMessage(data.error || "Spotify not authenticated.");
           }
         } catch (error) {
           console.error("Error checking authentication:", error);
-          setMessage("Failed to authenticate.");
         }
       } else {
-        setUser(null);
         setSpotifyAuthenticated(false);
-        setMessage("User not authenticated");
       }
     });
-  
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribe();
+      if (refreshTimeout) clearTimeout(refreshTimeout); // Cleanup timeout
+    };
   }, []);
 
-  if (!user) {
-    return <div>{message}</div>;
-  }
-
   return spotifyAuthenticated ? (
-    <SpotifyAuth
-      message={message}
-      spotifyToken={spotifyToken}
-      refreshToken={refreshToken}
-      setMessage={setMessage}
-    />
+  <SpotifyAuth 
+    spotifyToken={spotifyToken} 
+    refreshToken={refreshToken} 
+    setSpotifyAuthenticated={setSpotifyAuthenticated}  // Pass the setter function here
+  />
   ) : (
     <SpotifyRequest />
   );

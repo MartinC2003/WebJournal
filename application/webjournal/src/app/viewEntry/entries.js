@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from '../styles/viewentry.module.css';
 
-function ViewEntry({entries }) {
+function Entries({entries }) {
   const router = useRouter();
 
   const handleViewMore = (id) => {
@@ -78,4 +78,4 @@ function ViewEntry({entries }) {
   );
 }
 
-export default ViewEntry;
+export default Entries;

@@ -1,13 +1,13 @@
 import { db } from "@/api/firebase";
 import axios from "axios";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 function PlaylistCreatorService() {
-  
-  // Fetches user data from Spotify using the provided token.
   const lastfm_key = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
+  const router = useRouter();
 
-
+  // Fetches user data from Spotify using the provided token.
   const fetchSpotifyUserProfile = async (spotifyToken) => {
     try {
       const response = await fetch("https://api.spotify.com/v1/me", {
@@ -28,27 +28,6 @@ function PlaylistCreatorService() {
   };
 
   // Refreshes the Spotify token.
-  // (This still calls your refresh token endpoint at localhost:8080;
-  // Do not use 
-  const refreshSpotifyToken = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/refresh_token", {
-        method: "GET",
-      });
-      if (!response.ok) throw new Error("Failed to refresh token");
-
-      const data = await response.json();
-      if (data.access_token) {
-        return data;  
-      } else {
-        console.error("No access token received.");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error refreshing Spotify token:", error);
-      return null;
-    }
-  };
 
   // Converts a month (string) and year into a start and end date (YYYY-MM-DD).
   //Works 
@@ -324,6 +303,12 @@ async function uploadPlaylistImage(playlistId, spotifyToken, playListImage) {
     });
 }
 
+const sendtoPlaylist = (playlistId, ) => {
+  const playlistid = playlistId;
+ // const spotifytoken = spotifyToken;
+  
+  router.push(`/createPlayList/${playlistid}`);
+}
 
 async function createPlaylist({
   selectedDateRange,
@@ -396,7 +381,11 @@ async function createPlaylist({
     });
 
     console.log("Tracks added to playlist successfully.");
+    sendtoPlaylist(playlistId, spotifyToken); 
+
+
     return playlistId;
+
   } catch (error) {
     console.error("Error in createPlaylist:", error.response?.data || error.message);
     throw error;
@@ -408,11 +397,11 @@ async function createPlaylist({
 
   return {
     fetchSpotifyUserProfile,
-    refreshSpotifyToken,
     getTimeRange,
     getTracks,
     searchTracks,
     getSimilarTracks,
+    sendtoPlaylist,
     createPlaylist,
   };
 }

@@ -113,7 +113,8 @@ app.get("/callback", async (req, res) => {
     // Store tokens in session
     req.session.spotifyAccessToken = access_token;
     req.session.spotifyRefreshToken = refresh_token;
-    req.session.spotifyScopes = scope; // Store the granted scopes
+    req.session.spotifyScopes = scope;  
+    req.session.expiresIn = expires_in;
 
     console.log("Granted Scopes:", scope);
 
@@ -144,7 +145,8 @@ app.get("/api/home", verifyFirebaseToken, async (req, res) => {
       message: "Welcome! You are authenticated with Firebase and Spotify.",
       user: req.user,
       spotifyAccessToken: req.session.spotifyAccessToken,
-      spotifyRefreshToken: req.session.spotifyRefreshToken
+      spotifyRefreshToken: req.session.spotifyRefreshToken,
+      expiresIn: req.session.expiresIn,
     });
   } catch (error) {
     if (error.response?.status === 401) {
@@ -188,7 +190,7 @@ app.get('/refresh_token', async function(req, res) {
       
       // Store both the access_token and refresh_token in session
       req.session.spotifyAccessToken = access_token;
-      req.session.spotifyRefreshToken = refresh_token; // Save the refresh token in session as well
+      req.session.spotifyRefreshToken = refresh_token;  
 
       // Send both tokens back in the response
       res.send({
@@ -202,11 +204,6 @@ app.get('/refresh_token', async function(req, res) {
     console.error("Error requesting Spotify token:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to get access token" });
   }
-});
-
-// Endpoint to get LastFM API Key
-app.get("/getLastFMKey", ( res) => {
-  res.json({ lastfm_key: lastfm_key });
 });
 
 

@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import styles from "../styles/createplaylist.module.css";
 import PlaylistCreatorService from "./playlistcreator-service";
 
-function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpotifyToken }) {
+function SpotifyAuth({ spotifyToken, refreshToken, setSpotifyAuthenticated }) {
   const [userProfile, setUserProfile] = useState(null);
   const [userProfileId, setUserProfileId] = useState(null);
-  const { fetchSpotifyUserProfile, createPlaylist, refreshSpotifyToken } = PlaylistCreatorService(spotifyToken);
+  const { fetchSpotifyUserProfile, createPlaylist, } = PlaylistCreatorService(spotifyToken);
   const [mood, setMood] = useState("Happy");
   const [month, setMonth] = useState("January");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -44,24 +44,7 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
         })
         .catch(async (error) => {
           console.error("Error fetching Spotify profile:", error);
-
-          // Attempt to refresh token if it's expired
-          const newToken = await refreshSpotifyToken();
-          if (newToken) {
-            setSpotifyToken(newToken);
-            setMessage("Spotify token refreshed successfully.");
-
-            fetchSpotifyUserProfile(newToken)
-              .then((data) => {
-                setUserProfile(data);
-              })
-              .catch((err) => {
-                console.error("Error fetching profile after refresh:", err);
-                setMessage("Failed to fetch profile after refresh. Please log in again.");
-              });
-          } else {
-            setMessage("Spotify token expired. Please log in again.");
-          }
+          setSpotifyAuthenticated(false);
         });
     }
   }, [spotifyToken]);
@@ -91,7 +74,6 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
     console.log("Selected Mood:", mood);
     console.log("Playlist image", playListImage)
     if (!userProfile) {
-      setMessage("User profile not loaded yet.");
       return;
     }
   
@@ -106,10 +88,9 @@ function SpotifyAuth({ spotifyToken, refreshToken, message, setMessage, setSpoti
         playListImage,  
       });
   
-      setMessage(`Playlist created successfully! Playlist ID: ${playlistId}`);
+      console.log(`Playlist created successfully! Playlist ID: ${playlistId}`)
     } catch (error) {
       console.error("Error creating playlist:", error);
-      setMessage("Error creating playlist. Please try again.");
     } finally {
       setLoading(false);
     }
