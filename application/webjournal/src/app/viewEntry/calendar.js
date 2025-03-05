@@ -76,7 +76,7 @@ const fetchEntriesForYear = async (year, setMarkedMonths) => {
   }
 };
 
-const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates,   }) => {
+const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }) => {
   const [markedDatesLocal, setMarkedDates] = useState(markedDates || []); 
   const [markedMonths, setMarkedMonths] = useState([]); 
 
@@ -93,6 +93,7 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates,   }) => {
   const onPanelChangeHandler = (value, ) => {
     
     const selectedDayjs = dayjs(value);
+    console.log('value:', value)
     const formattedDate = selectedDayjs.format('YYYY-MM-DD');
     
     onDateSelect(formattedDate);   
@@ -126,8 +127,14 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates,   }) => {
   };
 
   const cellRender = (current, info) => {
-    if (info.type === 'date') return dateCellRender(current);
-    if (info.type === 'month') return monthCellRender(current);
+    if (info.type === 'date') {
+      setMode('date'); // Update mode to 'date'
+      return dateCellRender(current);
+    }
+    if (info.type === 'month') {
+      setMode('month'); // Update mode to 'month'
+      return monthCellRender(current);
+    }
     return info.originNode;
   };
 

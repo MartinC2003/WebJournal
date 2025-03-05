@@ -104,3 +104,15 @@ width: 300px;
 height: 300px;
 }
 
+.headings {
+    margin-bottom: 10px;
+    font-family: var(--font-ethnocentric);
+    margin-left: 10px;
+    color: #603892;
+    font-size: 2rem;
+}
+
+.noEntriesContainer {
+    margin:50px;
+    padding: 20px
+}

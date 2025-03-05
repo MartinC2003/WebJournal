@@ -70,7 +70,7 @@ const ViewEntry = () => {
             <p>Mood: {entry.mood}</p>
             <p>{entry.text}</p>
 
-            {tracks.length > 0 ? (
+            {tracks.length > 0 && (
               <div>
                 <h2>Tracks</h2>
                 {tracks.map((track, index) => (
@@ -80,8 +80,6 @@ const ViewEntry = () => {
                   </div>
                 ))}
               </div>
-            ) : (
-              <p>No tracks available</p>
             )}
           </div>
         </div>
