@@ -7,6 +7,8 @@ import { UserAuth } from '../../api/AuthContext';
 import { db } from '../../api/firebase';
 import styles from '../styles/createentry.module.css';
 
+//make the max tracks 5 
+
 function NewEntry() {
   const router = useRouter();
   const { user } = UserAuth();

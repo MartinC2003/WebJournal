@@ -46,9 +46,19 @@ function ViewEntry({ selectedDate }) {
 
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    if (!dateString) return '';
+  
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+  
+    const [year, month, day] = dateString.split('-');
+    const monthName = months[parseInt(month, 10) - 1];  
+  
+    return `${monthName} ${parseInt(day, 10)}, ${year}`;
   };
+  
 
   const filteredEntries = selectedDate
     ? entries.filter(entry => entry.date === selectedDate)

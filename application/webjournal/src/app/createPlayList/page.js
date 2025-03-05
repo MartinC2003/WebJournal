@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import SpotifyAuth from "./spotify-auth";
 import SpotifyRequest from "./spotify-request";
 
+//remove the token refresh from useffect
+//remove the message too  
 function CreatePlaylistHome() {
   const [message, setMessage] = useState("Loading");
   const [user, setUser] = useState(null);

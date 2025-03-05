@@ -39,7 +39,7 @@ function PlaylistCreatorService() {
 
       const data = await response.json();
       if (data.access_token) {
-        return data; // { access_token, refresh_token? }
+        return data;  
       } else {
         console.error("No access token received.");
         return null;
