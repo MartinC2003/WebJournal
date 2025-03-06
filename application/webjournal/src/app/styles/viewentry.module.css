@@ -29,6 +29,62 @@
     margin-bottom: 20px;
 }
 
+.viewEntryContentContainer {
+    display:flex;
+    flex-direction: row;
+    gap: 50px;
+    margin-top: 30px;
+}
+
+.entryTitleContainer{
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid #603892;
+}
+.entryDateContainer{
+    margin-top: 20px;
+}
+
+.entryTextContainer{
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.entryContentContainer{
+    margin-top: 20px;
+
+}
+.entryContainer {
+    display: flex;
+    flex-direction: column;
+}
+.entryContainer2{
+    border-bottom: 3px solid #603892;
+}
+.trackContentContainer{
+    margin-top: 20px;
+
+}
+.trackContainer{
+    display: flex;
+    flex-direction: row;
+    gap:5px;
+
+}
+
+.trackContainer2{
+    margin-top: 20px;
+}
+
+.deleteButtonContainer{
+    display: flex;
+    flex-direction: row-reverse;
+    margin-bottom: 20px;
+    margin-top: 50px;
+    padding-top: 20px;
+}
 /* Entry Card */
 .entryCard {
     width: 900px;
@@ -82,12 +138,42 @@
     font-size: 60px;
 }
 
+.entryNameview {
+    color: #603892;
+    font-family: var(--font-planetkosmos);
+    font-size: 60px;
+}
+
+
 .entryDate {
     color: white;
     font-family: var(--font-nullshock); 
     font-size: 20px;
 }
 
+.entryDateView {
+    color: #603892;
+    font-family: var(--font-nullshock); 
+    font-size: 25px;
+}
+
+.entryTextView {
+    color: #603892;
+    font-family: var(--font-tahoma); 
+    font-size: 20px;
+}
+
+.trackTitle {
+    font-size: 20px;
+    font-family: var(--font-nullshock);
+    color: #603892;
+}
+
+.trackArtist {
+    font-family: var(--font-ethnocentric);
+    font-size: 15px;
+    color: #603892;
+}
 .button {
     padding: 10px 20px;
     margin-left: 5%;
@@ -104,8 +190,19 @@
     background-color: #666389;
   }
 
-
-
+.deleteButton {
+    padding: 10px 20px;
+    width: 338px;
+    height: auto;
+    font-size: 15px;
+    color: white;
+    background-color: #9994D0;
+    border-radius: 50px;
+    font-family: var(--font-nullshock);
+}
+.deleteButton:hover {
+    background-color: #666389;
+  }
 /* Images */
 .titleImage {
     width: 100%;
@@ -113,12 +210,9 @@
     margin-bottom: 20px;
 }
 
-
-
 .moodImage {
-border-radius: 50px;
-width: 300px;
-height: 300px;
+    max-width: 400px;
+    height: 600px;
 }
 
 .headings {
@@ -132,4 +226,8 @@ height: 300px;
 .noEntriesContainer {
     margin:50px;
     padding: 20px
+}
+.trackIcon {
+    width: 3rem;
+    height: auto;
 }
