@@ -26,9 +26,6 @@ function PlaylistCreatorService() {
       return null;
     }
   };
-
-  // Refreshes the Spotify token.
-
   // Converts a month (string) and year into a start and end date (YYYY-MM-DD).
   //Works 
   function getTimeRange(month, year) {
@@ -303,11 +300,11 @@ async function uploadPlaylistImage(playlistId, spotifyToken, playListImage) {
     });
 }
 
-const sendtoPlaylist = (playlistId, ) => {
+const sendtoPlaylist = (playlistId, spotifyToken) => {
   const playlistid = playlistId;
- // const spotifytoken = spotifyToken;
+  const spotifytoken = spotifyToken;
   
-  router.push(`/createPlayList/${playlistid}`);
+  router.push(`/createPlayList/${playlistid}/${spotifytoken}`);
 }
 
 async function createPlaylist({

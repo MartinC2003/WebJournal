@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import styles from "../styles/createplaylist.module.css";
 import PlaylistCreatorService from "./playlistcreator-service";
 
-function SpotifyAuth({ spotifyToken, refreshToken, setSpotifyAuthenticated }) {
+function SpotifyAuth({ spotifyToken, refreshSpotifyToken }) {
   const [userProfile, setUserProfile] = useState(null);
   const [userProfileId, setUserProfileId] = useState(null);
   const { fetchSpotifyUserProfile, createPlaylist, } = PlaylistCreatorService(spotifyToken);
@@ -33,21 +33,20 @@ function SpotifyAuth({ spotifyToken, refreshToken, setSpotifyAuthenticated }) {
 
   // Fetches user data from Spotify
   useEffect(() => {
-    if (spotifyToken) {
+    if (!spotifyToken && refreshSpotifyToken) {
+      refreshSpotifyToken();  
+    } else if (spotifyToken) {
       fetchSpotifyUserProfile(spotifyToken)
         .then((data) => {
           console.log("Fetched Spotify Profile:", data);
-          console.log("Spotify Access Token:", spotifyToken);
-          console.log("Spotify Refresh Token:", refreshToken);
           setUserProfile(data);
           setUserProfileId(data.id);
         })
         .catch(async (error) => {
           console.error("Error fetching Spotify profile:", error);
-          setSpotifyAuthenticated(false);
         });
     }
-  }, [spotifyToken]);
+  }, [spotifyToken, refreshSpotifyToken]);
 
   const fetchAndSetMoodImage = async () => {
     const imagePath = moodImages[mood];
@@ -111,10 +110,10 @@ function SpotifyAuth({ spotifyToken, refreshToken, setSpotifyAuthenticated }) {
           <div className={styles.imageContainer}>
             <Image
               src="/createplaylist/createplaylist-desc-plc.png"
-              className={styles.titleImage}
+              className={styles.playlistCreatorImage}
               width={1129}
               height={211}
-              alt="Main album cover"
+              alt="Playlist creator placeholder image"
             />
           </div>
           <div className={styles.descContainer}>
@@ -191,13 +190,16 @@ function SpotifyAuth({ spotifyToken, refreshToken, setSpotifyAuthenticated }) {
                 ))}
               </select>
             </div>
-            <button 
-              className={styles.createPlaylistButton}
-              onClick={handleCreatePlaylist}
-              disabled={loading}
-            >
-              {loading ? "Creating Playlist..." : "Create Playlist"}
-            </button>
+            <div className={styles.createPlaylistButtonContainer}>
+              <button 
+                className={styles.createPlaylistButton}
+                type="button"
+                onClick={handleCreatePlaylist}
+                disabled={loading}
+              >
+                {loading ? "Creating Playlist..." : "Create Playlist"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

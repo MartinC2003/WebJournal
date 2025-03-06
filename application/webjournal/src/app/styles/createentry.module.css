@@ -101,9 +101,11 @@
 
 .headings2 {
     margin-bottom: 10px;
-    font-family: var(--font-ethnocentric);
+    font-family: var(--font-tahoma); 
     color: #603892;
-    font-size: 15px;
+    font-size: 27px;
+    font-weight: 900;
+
 }
 
 .headings3 {

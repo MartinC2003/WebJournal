@@ -29,13 +29,15 @@ function Entries({entries }) {
         entries.map((entry) => (
           <div key={entry.id} className={styles.entryCard}>
             <div className={styles.entrycardContent}>
-              <Image
-                src="/viewentry/viewentryimg-plc.png"
-                className={styles.entryImage}
-                width={200}
-                height={411}
-                alt="Entry Title"
-              />
+              <div className={styles.entrycardContent1}>
+                <Image
+                  src="/viewentry/viewentryimg-plc.png"
+                  className={styles.entryImage}
+                  width={200}
+                  height={411}
+                  alt="Entry Title"
+                />
+              </div>
               <div className={styles.entrycardContent2}>
                 <div className={styles.entrycardContentDate}>
                   <Image
