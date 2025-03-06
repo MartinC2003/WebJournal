@@ -27,6 +27,13 @@
   margin-bottom: 20px;
 }
 
+.playlistMessage {
+  font-family: var(--font-planetkosmos);
+  color: white;
+  font-size: 50px;
+  margin-top: 20px;
+}
+
 .playlistCreatorImage {
   width: 100%;
   max-width: 800px;
@@ -101,8 +108,6 @@
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
-  margin-left: 5%;
-  margin-right: 5%;
   font-size: 25px;
   color: white;
   background-color: #9994D0;
@@ -113,6 +118,8 @@
 .buttonsignin {
   width: 345px;
   height: 71px;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .playlistButton {
@@ -167,8 +174,8 @@
 .playlistContainer {
   gap: 100px;
   justify-content: space-between;
-  margin: 50px;  
-  padding: 20px;
+  margin: 0 200px; 
+  padding: 0 20px;
 }
 
 .createPlaylistButtonContainer {
@@ -178,6 +185,16 @@
   margin-top: 50px;
 }
 
+.playlistMessageContainer {
+  border-radius: 60px 20px 60px 20px;
+  background-color: #9994D0;  
+  width: 1129px;
+  height: 111px;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 /* Mood Selection */
 .chooseMoodTitle {
   font-family: var(--font-ethnocentric);
@@ -280,6 +297,10 @@
   color: #603892;
 }
 
+.trackItem {
+  margin-top: 25px;
+}
+
 .playlistTitle {
   font-family: var(--font-ethnocentric);
   font-size: 4rem;
@@ -287,17 +308,12 @@
 }
 .playlistTracks {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 .playlistContent{
   display: flex;
   flex-direction: column;
-}
-.playlistContent2{
-  gap:100px;
-  padding: 0 20px 20px 20px; /* Top 0, Right 20px, Bottom 20px, Left 20px */
-
 }
 
 .playlistDescription {
@@ -308,8 +324,12 @@
 }
 
 .playlistLinkContainer {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap:20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.playlistLinkContainer button {
+  margin-top: 20px;
 }

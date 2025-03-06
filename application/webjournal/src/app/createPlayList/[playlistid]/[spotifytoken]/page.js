@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SpotifyIcon from '../../../../../public/icons/SpotifyIcon.svg';
 import styles from '../../../styles/createplaylist.module.css';
@@ -11,6 +11,7 @@ const ViewPlaylist = () => {
   const params = useParams(); 
   const playlistid = params?.playlistid;
   const spotifytoken = params?.spotifytoken;
+  const router = useRouter();
 
   const [playlist, setPlaylist] = useState(null);
   const [tracks, setTracks] = useState([]);
@@ -39,7 +40,6 @@ const ViewPlaylist = () => {
         setPlaylist(playlistResponse.data);
         setPlaylistImage(playlistResponse.data.images?.[0]?.url || '');
 
-        // Fetch first 10 tracks
         const tracksUrl = `https://api.spotify.com/v1/playlists/${playlistid}/tracks?limit=5`;
         console.log('Fetching playlist tracks from Spotify API...');
         const tracksResponse = await axios.get(tracksUrl, {
@@ -67,6 +67,13 @@ const ViewPlaylist = () => {
   return (
     <div className={styles.app}>
       <div className={styles.pagecontentContainer}>
+        <div className={styles.titleContainer}>
+          <div className={styles.playlistMessageContainer}>
+            <h1 className={styles.playlistMessage}>
+              Playlist Successfully Created !
+            </h1>
+          </div>
+        </div>
         <div className={styles.playlistContainer}>
           <div className={styles.playlistContent}>
             <div className={styles.playlistImageContainer}>
