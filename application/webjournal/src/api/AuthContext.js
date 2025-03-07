@@ -1,6 +1,6 @@
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import React, { useContext, useEffect, useState } from "react";
-import { auth } from "./firebase"; // assuming this is where your Firebase auth is set up
+import { auth } from "./firebase";
 
 export const AuthContext = React.createContext();
 
@@ -39,7 +39,6 @@ export const AuthContextProvider = ({ children }) => {
     if (typeof window !== "undefined") {
       const storedUser = window.localStorage.getItem("user");
       if (storedUser === "true") {
-        // You could set this to some value indicating the user is logged in, for example `true`
         setUser(true);
       }
     }

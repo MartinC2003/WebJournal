@@ -50,9 +50,9 @@ const verifyFirebaseToken = async (req, res, next) => {
     // Extract user UID
     const userUid = decodedToken.uid;
     
-    console.log("Authenticated User UID:", userUid); // Log UID for debugging
+    console.log("Authenticated User UID:", userUid);  
 
-    req.user = decodedToken; // Attach user data to request
+    req.user = decodedToken;
     next();
   } catch (error) {
     console.error("Error verifying Firebase token:", error);
@@ -64,7 +64,7 @@ const verifyFirebaseToken = async (req, res, next) => {
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
   const scope =
-    "user-read-private user-read-email playlist-modify-private playlist-modify-public ugc-image-upload";  // Added ugc-image-upload scope
+    "user-read-private user-read-email playlist-modify-private playlist-modify-public ugc-image-upload"; 
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
