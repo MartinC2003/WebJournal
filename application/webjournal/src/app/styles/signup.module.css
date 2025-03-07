@@ -21,21 +21,21 @@
 
 .SignupTitle {
   color: #603892; 
-  font-size: 80px; /* Decrease font size of the title */
+  font-size: 80px;  
   font-family: var(--font-rangerforce); 
-  margin-bottom: 5px; /* Decrease margin bottom to bring the title closer to the picture */
+  margin-bottom: 5px;  
 }
 
 .SignUpContainer .image {
-  max-height: 100vh; /* Decrease maximum height of the image */
+  max-height: 100vh;  
   max-width: 80vh; 
 }
 
 .SignupInput {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
+  justify-content: center;  
+  align-items: center;  
   min-height: 80vh;
   width: 50vh;
   background-color: rgba(96, 56, 146, 0.7);
@@ -74,7 +74,11 @@
 }
 
 .authInput {
-  align-items: flex-start; /* Align content to the left */
-  margin-top: 20px; /* Add spacing above */
-  margin-bottom: 20px; /* Add spacing below */
+  align-items: flex-start; 
+  margin-top: 20px;  
+  margin-bottom: 20px;  
+}
+
+.button:hover {
+  background-color: #666389;
 }

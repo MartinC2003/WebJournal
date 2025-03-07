@@ -7,8 +7,6 @@ import { UserAuth } from '../../api/AuthContext';
 import { db } from '../../api/firebase';
 import styles from '../styles/createentry.module.css';
 
-//make the max tracks 5 
-
 function NewEntry() {
   const router = useRouter();
   const { user } = UserAuth();
@@ -151,7 +149,7 @@ function NewEntry() {
             </div>
             <div className={styles.flexContainer2}>
               <div className={styles.headingsContainer}>
-                <h1 className={styles.headings}>Write down how your day went</h1>
+                <h1 className={styles.headings}>My day went...</h1>
               </div>
               <div className={styles.textContainer}>
                 <textarea
@@ -165,7 +163,7 @@ function NewEntry() {
             <div className={styles.flexContainer3}>
               <div className={styles.trackDescription}>
                 <div className={styles.headingsContainer}>
-                  <h1 className={styles.headings}>Songs I was listening to</h1>
+                  <h1 className={styles.headings}>Songs I was listening to...</h1>
                 </div>
                 <h2 className={styles.headings2}> Put down what your top tracks of the day were! Please make sure everything is spelt 
                   correctly
@@ -198,10 +196,20 @@ function NewEntry() {
                     </button>
                   </div>
                 ))}
-                <button type="button" onClick={addTrack} className={styles.button}>
-                  Add Track
+                <button
+                  type="button"
+                  onClick={addTrack}
+                  className={styles.button}
+                  disabled={entry.tracks.length >= 5}  
+                  style={{
+                    backgroundColor: entry.tracks.length >= 5 ? '#5a3f6e' : '',  
+                  }}
+                >
+                  {entry.tracks.length >= 5 ? 'Track limit reached' : 'Add Track'}
                 </button>
               </div>
+
+
             </div>
             <div className={styles.flexContainer4}>
               <button type="submit" className={styles.buttonsubmit}>

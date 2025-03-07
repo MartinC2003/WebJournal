@@ -1,8 +1,9 @@
 import { db } from '@/api/firebase';
-import { Badge, Calendar } from 'antd';
+import { Badge, Calendar, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+
 
 function getTimeRange(month, year) {
   const monthNames = [
@@ -36,14 +37,23 @@ const fetchEntriesForMonth = async (month, year, setMarkedDates) => {
     );
 
     const querySnapshot = await getDocs(q);
-    const datesWithEntries = [];
+    const entriesMap = {};
 
     querySnapshot.forEach((doc) => {
-      const date = doc.data().date; 
-      datesWithEntries.push(date);
+      const data = doc.data();
+      const date = data.date;
+      const entryTitle = data.title || "Untitled Entry"; // Ensure title exists
+
+      if (!entriesMap[date]) {
+        entriesMap[date] = [];
+      }
+      // Store up to 3 entry titles per date
+      if (entriesMap[date].length < 3) {
+        entriesMap[date].push(entryTitle);
+      }
     });
 
-    setMarkedDates(datesWithEntries);
+    setMarkedDates(entriesMap);
   } catch (error) {
     console.error("Error fetching entries:", error);
   }
@@ -101,25 +111,31 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }
 
   const dateCellRender = (current) => {
     const date = current.format('YYYY-MM-DD');
-    if (markedDatesLocal.includes(date)) {
+    const entries = markedDatesLocal[date] || [];
+  
+    if (entries.length > 0) {
       return (
         <ul className="events">
-          <li>
-            <Badge status="success" text="Entry" />
-          </li>
+          {entries.map((title, index) => (
+            <li key={index}>
+              <Badge 
+                status="success" 
+                text={<span style={{ color: 'white',fontFamily: 'var(--font-nullshock)',}}>{title}</span>} 
+                />
+            </li>
+          ))}
         </ul>
       );
     }
     return null;
   };
-
+  
   const monthCellRender = (current) => {
     const month = current.month();
     if (markedMonths.includes(month)) {
       return (
         <div className="notes-month">
-          <section>📅</section>
-          <span>Has Entries</span>
+            <span> ★ Has Entries</span>
         </div>
       );
     }
@@ -128,24 +144,37 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }
 
   const cellRender = (current, info) => {
     if (info.type === 'date') {
-      setMode('date'); // Update mode to 'date'
+      setMode('date');  
       return dateCellRender(current);
     }
     if (info.type === 'month') {
-      setMode('month'); // Update mode to 'month'
+      setMode('month'); 
       return monthCellRender(current);
     }
     return info.originNode;
   };
 
   return (
-    <div className="border rounded-lg shadow-lg p-4 bg-white">
-      <Calendar
-        value={dayjs(selectedDate)}
-        onSelect={onPanelChangeHandler}
-        cellRender={cellRender}
-      />
-    </div>
+    <ConfigProvider
+      theme={{
+        components: {
+          Calendar: {
+            controlItemBgHover: "#cfbbe4",
+            itemActiveBg: "#9994D0",
+            colorPrimary: "#603892",
+            fontFamily: 'var(--font-nullshock)', 
+            fullBg	: "#FFAEDF",
+            fullPanelBg	: "#FFAEDF",
+            colorText: "#ffffff",
+          },
+        },
+      }}
+    >
+<div className="rounded-lg shadow-lg p-4 bg-[#FFAEDF] border-none">
+  <Calendar value={dayjs(selectedDate)} onSelect={onPanelChangeHandler} cellRender={cellRender} />
+</div>
+
+    </ConfigProvider>
   );
 };
 
