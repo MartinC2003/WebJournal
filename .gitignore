@@ -6,3 +6,4 @@ application/webjournal/node_modules
 /application/node_modules
 application/webjournal/src/api/firebase.js
 application/server/.env 
+application/webjournal/.env
