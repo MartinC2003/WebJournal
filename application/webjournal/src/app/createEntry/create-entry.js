@@ -85,8 +85,8 @@ function NewEntry() {
     }
   };
 
+  
   return (
-    <div className={styles.app}>
       <div className={styles.pagecontentContainer}>
         <div className={styles.titleContainer}>
           <Image
@@ -220,7 +220,6 @@ function NewEntry() {
 
         </div>
       </div>
-    </div>
   );
 }
 

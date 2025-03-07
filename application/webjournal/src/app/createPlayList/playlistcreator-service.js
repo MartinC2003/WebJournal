@@ -170,7 +170,7 @@ function PlaylistCreatorService() {
         }
       }
   
-      // If 200 tracks haven't been reached yet, start looking for similar albums**
+      // If 200 tracks haven't been reached yet, start looking for similar albums 
       if (recommendedTracks.size < 200) {
         console.log("Switching to album-based recommendations...");
         const tempTracks = Array.from(recommendedTracks).map(JSON.parse);

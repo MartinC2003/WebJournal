@@ -1,7 +1,7 @@
 'use client';
-
 import { db } from "@/api/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { motion } from 'framer-motion';
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { UserAuth } from '../../api/AuthContext';
@@ -101,7 +101,12 @@ const ViewEntryPage = () => {
   }
 
   return (
-    <div className={styles.app}>
+    <motion.div
+    className={styles.app}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1 }}
+    >
       <div className={styles.pagecontentContainer}>
         <div className={styles.titleContainer}>
           <Image src="/viewentry/viewentries-title.png" className={styles.titleImage} width={1188} height={211} alt="Entry Title" />
@@ -118,7 +123,8 @@ const ViewEntryPage = () => {
           <Entries selectedDates={selectedDates} entries={entries} />
         </div>
       </div>
-    </div>
+    </motion.div>
+
   );
 };
 

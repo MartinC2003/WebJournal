@@ -1,5 +1,6 @@
 'use client';
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { motion } from 'framer-motion';
 import Image from "next/image";
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -73,59 +74,65 @@ const ViewEntry = () => {
   if (!entry) return <div>Loading...</div>;
 
   return (
-    <div className={styles.app}>
+    <motion.div
+    className={styles.app}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1 }}
+    >
       <div className={styles.pagecontentContainer}>
-        <div className={styles.viewEntryContentContainer}>
-          <div className={styles.moodImageContainer}>
-            <Image
-              src={moodImages[mood]}
-              className={styles.moodImage}
-              width={544}
-              height={856}
-              alt={`${mood} mood cover`}
-            />
-          </div>
-          <div className={styles.entryContainer}>
-            <div className={styles.entryTitleContainer}>
-              <h1 className={styles.entryNameview}>{entry.title}</h1>
+          <div className={styles.viewEntryContentContainer}>
+            <div className={styles.moodImageContainer}>
+              <Image
+                src={moodImages[mood]}
+                className={styles.moodImage}
+                width={544}
+                height={856}
+                alt={`${mood} mood cover`}
+              />
             </div>
-            <div className={styles.entryContainer2}>
-              <div className={styles.entryDateContainer}>
-                <p className={styles.entryDateView}>{formatDate(entry.date)}</p>
+            <div className={styles.entryContainer}>
+              <div className={styles.entryTitleContainer}>
+                <h1 className={styles.entryNameview}>{entry.title}</h1>
               </div>
-              <div className={styles.entryTextContainer}>
-                <p className={styles.entryTextView}>{entry.text}</p>
+              <div className={styles.entryContainer2}>
+                <div className={styles.entryDateContainer}>
+                  <p className={styles.entryDateView}>{formatDate(entry.date)}</p>
+                </div>
+                <div className={styles.entryTextContainer}>
+                  <p className={styles.entryTextView}>{entry.text}</p>
+                </div>
               </div>
-            </div>
-            {tracks.length > 0 && (
-              <div className={styles.trackContentContainer}>
-                <p className={styles.entryDateView}>Tracks I was Listening to</p>
-                {tracks.map((track, index) => (
-                  <div key={index} className={styles.trackContainer}>
-                    <Image
-                      src="/icons/TrackIcon.svg"
-                      className={styles.trackIcon}
-                      width={20}
-                      height={20}
-                      alt="Entry Title"
-                    />
-                    <div className={styles.trackContainer2}>
-                      <h3 className={styles.trackTitle}>{track.trackTitle}</h3>
-                      <p className={styles.trackArtist}>{track.artist}</p>
+              {tracks.length > 0 && (
+                <div className={styles.trackContentContainer}>
+                  <p className={styles.entryDateView}>Tracks I was Listening to</p>
+                  {tracks.map((track, index) => (
+                    <div key={index} className={styles.trackContainer}>
+                      <Image
+                        src="/icons/TrackIcon.svg"
+                        className={styles.trackIcon}
+                        width={20}
+                        height={20}
+                        alt="Entry Title"
+                      />
+                      <div className={styles.trackContainer2}>
+                        <h3 className={styles.trackTitle}>{track.trackTitle}</h3>
+                        <p className={styles.trackArtist}>{track.artist}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              )}
+              <div className={styles.deleteButtonContainer}>
+                <button className={styles.deleteButton} onClick={handleDeleteEntry}>
+                  Delete Entry
+                </button>
               </div>
-            )}
-            <div className={styles.deleteButtonContainer}>
-              <button className={styles.deleteButton} onClick={handleDeleteEntry}>
-                Delete Entry
-              </button>
             </div>
           </div>
-        </div>
       </div>
-    </div>
+    </motion.div>
+
   );
 };
 

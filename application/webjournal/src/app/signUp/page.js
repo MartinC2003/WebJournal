@@ -1,14 +1,19 @@
 'use client'
-import React from 'react';
-import { AuthSignUp } from './auth-signup';
-import styles from '../styles/signup.module.css'
 import { Container } from '@mui/material';
-import Image from 'next/image'; 
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import styles from '../styles/signup.module.css';
+import { AuthSignUp } from './auth-signup';
 export default function SignUp(){
 
     return (
         <Container>
-            <div className={styles.App}>
+            <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}  
+            className={styles.app}
+            >   
                 <div className={styles.SignUpContainer}>
                         <div className={styles.SignupTitleContainer}>
                             <p className={styles.SignupTitle}>S</p>
@@ -34,8 +39,7 @@ export default function SignUp(){
                             <AuthSignUp/>
                         </div>
                 </div>
-            </div>
+            </motion.div>
         </Container>
-
     );
 }

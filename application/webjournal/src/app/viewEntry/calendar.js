@@ -135,7 +135,10 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }
     if (markedMonths.includes(month)) {
       return (
         <div className="notes-month">
-            <span> ★ Has Entries</span>
+              <Badge 
+                status="success" 
+                text={<span style={{ color: 'white',fontFamily: 'var(--font-nullshock)',}}>Has Entries</span>} 
+              />
         </div>
       );
     }

@@ -1,9 +1,11 @@
 'use client';
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { motion } from 'framer-motion';
 import { useEffect, useState } from "react";
 import SpotifyAuth from "./spotify-auth";
 import SpotifyRequest from "./spotify-request";
+
 
 function CreatePlaylistHome() {
   const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
@@ -93,15 +95,23 @@ function CreatePlaylistHome() {
     return () => unsubscribe();
   }, []);
 
-  return spotifyAuthenticated ? (
-    <SpotifyAuth 
-      spotifyToken={spotifyToken} 
-      refreshToken={refreshToken} 
-      refreshSpotifyToken={refreshSpotifyToken}  
-    />
-  ) : (
-    <SpotifyRequest />
-  );
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}  
+    >
+      {spotifyAuthenticated ? (
+        <SpotifyAuth 
+          spotifyToken={spotifyToken} 
+          refreshToken={refreshToken} 
+          refreshSpotifyToken={refreshSpotifyToken}  
+        />
+      ) : (
+        <SpotifyRequest />
+      )}
+    </motion.div>
+  )
 }
 
 export default CreatePlaylistHome;

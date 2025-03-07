@@ -1,15 +1,20 @@
 'use client';
-import React from 'react';
-import { AuthLogin } from './auth-login';
-import styles from '../styles/login.module.css'
-import Image from 'next/image'; 
 import { Container } from '@mui/material';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import styles from '../styles/login.module.css';
+import { AuthLogin } from './auth-login';
 
 export default function LogIn(){
 
     return (
         <Container>
-            <div className={styles.App}>
+            <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}  
+            className={styles.app}
+            >    
                 <div className={styles.LoginContainer}>
                     <div className={styles.LoginTitleContainer}>
                         <p className={styles.LoginTitle}>L</p>
@@ -33,9 +38,8 @@ export default function LogIn(){
                         </p>
                         <AuthLogin/>
                     </div>
-                </div>
             </div>
+            </motion.div>
         </Container>
-
     );
 }

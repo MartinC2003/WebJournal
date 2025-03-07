@@ -1,11 +1,13 @@
 'use client';
 
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SpotifyIcon from '../../../../../public/icons/SpotifyIcon.svg';
 import styles from '../../../styles/createplaylist.module.css';
+
 
 const ViewPlaylist = () => {
   const params = useParams(); 
@@ -65,7 +67,12 @@ const ViewPlaylist = () => {
   };
 
   return (
-    <div className={styles.app}>
+    <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1 }}  
+    className={styles.app}
+  >
       <div className={styles.pagecontentContainer}>
         <div className={styles.titleContainer}>
           <div className={styles.playlistMessageContainer}>
@@ -143,7 +150,8 @@ const ViewPlaylist = () => {
           </div>
         </div>
       </div>
-    </div>
+  </motion.div>
+
   );
 };
 

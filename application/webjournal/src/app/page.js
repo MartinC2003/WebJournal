@@ -1,5 +1,6 @@
 'use client';
 import { UserAuth } from '@/api/AuthContext';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -29,7 +30,13 @@ export default function Home() {
   }, [user]);
 
   return (
-    <div className={styles.app}>
+    <motion.div
+    className={styles.app}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1 }}
+  >
+        <div className={styles.app}>
       {!user ? (
         <div className={styles.welcomeContainer}>
           <div className={styles.imageContainer}>
@@ -160,5 +167,7 @@ export default function Home() {
         </div>
       )}
     </div>
+    </motion.div>
+
   );
 }
