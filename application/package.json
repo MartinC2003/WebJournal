@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@next/font": "^14.2.3",
+    "next": "^15.2.1",
     "next-videos": "^1.4.1"
   }
 }
