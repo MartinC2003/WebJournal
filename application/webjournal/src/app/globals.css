@@ -67,3 +67,38 @@ video {
     text-wrap: balance;
   }
 }
+
+@font-face {
+  font-family: "PlanetKosmos";
+  src: url("/fonts/PlanetKosmos.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ethnocentric";
+  src: url("/fonts/Ethnocentric.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Tahoma";
+  src: url("/fonts/Tahoma.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Nullshock";
+  src: url("/fonts/Nullshock.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Rangerforce";
+  src: url("/fonts/Rangerforce.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}

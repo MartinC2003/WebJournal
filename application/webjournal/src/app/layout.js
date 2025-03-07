@@ -1,63 +1,10 @@
-'use client';
-import React from 'react';
+"use client";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from '../components/navbar';
 import { AuthContextProvider } from "../api/AuthContext";
-import localFont from "next/font/local";
+import Navbar from "../components/navbar";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-const PlanetKosmos = localFont({
-  src: [
-    {
-      path: '../../public/fonts/PlanetKosmos.ttf',
-      weight: '400'
-    }
-  ],
-  variable: '--font-planetkosmos'
-});
-
-const Ethnocentric = localFont({
-  src: [
-    {
-      path: '../../public/fonts/Ethnocentric.ttf',
-      weight: '400'
-    }
-  ],
-  variable: '--font-ethnocentric'
-});
-
-const Tahoma = localFont({
-  src: [
-    {
-      path: '../../public/fonts/Tahoma.ttf',
-      weight: '400'
-    }
-  ],
-  variable: '--font-tahoma'
-});
-
-const Nullshock = localFont({
-  src: [
-    {
-      path: '../../public/fonts/Nullshock.ttf',
-      weight: '400'
-    }
-  ],
-  variable: '--font-nullshock'
-});
-
-const Rangerforce = localFont({
-  src: [
-    {
-      path: '../../public/fonts/Rangerforce.ttf',
-      weight: '400'
-    }
-  ],
-  variable: '--font-rangerforce'
-});
-
 
 const metadata = {
   title: "Create Next App",
@@ -66,16 +13,15 @@ const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${PlanetKosmos.variable} ${Ethnocentric.variable} ${Tahoma.variable} ${Nullshock.variable} ${Rangerforce.variable} font-sans`}>
+    <html lang="en" className={`${inter.variable} font-sans`}>
       <head>
         <link rel="stylesheet" href={inter.href} />
-        <style>{`${Tahoma.css} ${Nullshock.css} ${Rangerforce.css}`}</style> {/* Include font CSS */}
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
       </head>
       <body>
         <div className="video-container">
-          <video src={require('../../public/login/loginbg.mp4')} autoPlay muted loop/>
+          <video src={require("../../public/login/loginbg.mp4")} autoPlay muted loop />
           <div className="video-overlay"></div>
         </div>
         <AuthContextProvider>
