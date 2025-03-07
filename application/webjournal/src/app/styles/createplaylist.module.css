@@ -18,7 +18,6 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: 20px;
 }
 
 .titleImage {
@@ -195,6 +194,11 @@
   align-items: center;
   justify-content: center;
 }
+
+.spotifysigninDescriptionContainer{
+  margin-top: 50px;
+}
+
 /* Mood Selection */
 .chooseMoodTitle {
   font-family: var(--font-ethnocentric);
@@ -272,6 +276,9 @@
   margin-top: 50px;
 }
 
+.requestImage {
+  margin-top: 20px;
+}
 /* Playlist */
 .trackInfo {
   display: flex;

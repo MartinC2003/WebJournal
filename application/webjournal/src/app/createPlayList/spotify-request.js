@@ -30,11 +30,11 @@ function SpotifyRequest() {
                 <div className={styles.spotifyrequestContainer}>
                     <Image
                     src="/createplaylist/createplaylistimg-plc.png"
-                    className={styles.titleImage}
-                    width={1129}
+                    className={styles.requestImage}
+                    width={1029}
                     height={488}
                     alt="Spotify Auth Image"/>
-                <div className={styles.spotifysigninDescription}>
+                <div className={styles.spotifysigninDescriptionContainer}>
                     <div className={styles.headingsContainer}>
                     <h1 className={styles.headings}>Sign into Spotify</h1>
                     </div>

@@ -7,15 +7,88 @@
 
 .welcomeContainer {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
-  width: 80%;
+  gap: 50px;
   margin:auto
 }
 
-.imageContainer {
-  flex: 1;
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flexContainer2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.infoContainer {
+  max-width: 50%;
+}
+
+.homeImageContainer {
   padding: 20px;
+  margin: 20px;
+}
+
+.homeImageContainer2 {
+  padding: 20px;
+  margin: 20px;
+}
+.createEntryInfoContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(96, 56, 146, 0.7);
+  padding: 20px;
+  border-radius: 20px 60px 20px 60px;
+  margin: 20px;
+  overflow: hidden;
+}
+
+.viewEntryInfoContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(96, 56, 146, 0.7);
+  padding: 20px;
+  border-radius: 20px 60px 20px 60px;
+  margin: 20px;
+  overflow: hidden;
+}
+.createPlaylistInfoContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(96, 56, 146, 0.7);
+  padding: 20px;
+  border-radius: 20px 60px 20px 60px;
+  margin: 20px;
+  overflow: hidden;
+}
+.imageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  justify-content: center;
+}
+
+.homeContentContainer {
+  margin: 0 200px; 
+  padding: 0 20px;
 }
 
 .image {
@@ -23,9 +96,12 @@
   height: auto;
   border-radius: 50px;
 }
+.imageDescriptionContainer {
+  max-width: 700px;
+}
 
 .descriptionText {
-  font-size: 20px;
+  font-size: 2rem;
   color: #603892; 
   font-family: var(--font-nullshock); 
   margin-top: 5%;
@@ -37,19 +113,15 @@
   min-height: 100vh;
   width: 70vh;
   background-color: rgba(96, 56, 146, 0.7); 
-  align-items: flex-start; 
   padding: 20px;
-  border-top-left-radius: 100px; 
-  border-top-right-radius: 29px; 
-  border-bottom-left-radius: 29px; 
-  border-bottom-right-radius: 100px; 
+  border-radius: 100px 29px 29px 100px;  
   margin: 20px;
   padding: 20px;
   overflow: hidden; 
 }
 
 .AboutTitle {
-  font-size: 36px;
+  font-size: 2rem;
   color: white; 
   margin: 5%;
   font-family: var(--font-nullshock); 
@@ -63,12 +135,33 @@
   font-family: var(--font-tahoma); 
 }
 
-.button {
+.infoButton {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
+.infoButton2 {
+  display: flex;
+  justify-content: center;
+}
+.signUpButton {
   padding: 10px 20px;
   margin-left: 5%;
   margin-right: 5%;  
-  width: 345px; 
+  width: 400px; 
   height: 71px; 
+  font-size: 25px;
+  color: white;
+  background-color: #9994D0;
+  border-radius: 50px; 
+  font-family: var(--font-nullshock); 
+}
+.button {
+  padding: 10px 20px; 
+  width: 400px; 
   font-size: 25px;
   color: white;
   background-color: #9994D0;
