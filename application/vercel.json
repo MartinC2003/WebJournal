@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "webjournal/package.json",
+        "use": "@vercel/next"
+      },
+      {
+        "src": "server/package.json",
+        "use": "@vercel/node"
+      }
+    ]
+  }
+  
