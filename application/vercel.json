@@ -6,18 +6,19 @@
       "use": "@vercel/next"
     },
     {
-      "src": "server/package.json",
+      "src": "server/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server/api/$1"
+      "dest": "/server/server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "webjournal/$1"
+      "dest": "/webjournal/$1"
     }
   ]
 }
+
