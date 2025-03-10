@@ -7,8 +7,8 @@ function SpotifyRequest() {
 
     const handleSpotifySignin = async () => {
         try {
-            // Redirect user to Spotify authorization page
-            router.push("http://localhost:8080/login"); 
+            //http://localhost:8080/ use locally 
+            router.push("https://web-journal-six.vercel/login"); 
         } catch (error) {
             console.error("Login failed", error);
             window.alert(`Login failed: ${error.message}`);

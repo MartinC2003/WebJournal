@@ -26,7 +26,8 @@ function CreatePlaylistHome() {
 
     try {
       const idToken = await currentUser.getIdToken();
-      const response = await fetch('http://localhost:8080/refresh_token', {
+      //use http://localhost:8080/ in local
+      const response = await fetch('https://web-journal-six.vercel/api/refresh_token', {
         method: 'GET',
         headers: { Authorization: `Bearer ${idToken}` },
         credentials: 'include',
@@ -68,7 +69,8 @@ function CreatePlaylistHome() {
       if (currentUser) {
         try {
           const idToken = await currentUser.getIdToken();
-          const response = await fetch("http://localhost:8080/api/home", {
+          //use http://localhost:8080/ in local
+          const response = await fetch("https://web-journal-six.vercel/api/home", {
             method: "GET",
             headers: { Authorization: `Bearer ${idToken}` },
             credentials: "include",
