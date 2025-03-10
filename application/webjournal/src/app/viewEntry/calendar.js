@@ -120,7 +120,7 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }
             <li key={index}>
               <Badge 
                 status="success" 
-                text={<span style={{ color: 'white',fontFamily: 'var(--font-nullshock)',}}>{title}</span>} 
+                text={<span style={{ color: 'white',fontFamily: "Nullshock",}}>{title}</span>} 
                 />
             </li>
           ))}
@@ -137,7 +137,7 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }
         <div className="notes-month">
               <Badge 
                 status="success" 
-                text={<span style={{ color: 'white',fontFamily: 'var(--font-nullshock)',}}>Has Entries</span>} 
+                text={<span style={{ color: 'white',fontFamily: "Nullshock",}}>Has Entries</span>} 
               />
         </div>
       );
@@ -165,7 +165,7 @@ const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }
             controlItemBgHover: "#cfbbe4",
             itemActiveBg: "#9994D0",
             colorPrimary: "#603892",
-            fontFamily: 'var(--font-nullshock)', 
+            fontFamily: "Nullshock", 
             fullBg	: "#FFAEDF",
             fullPanelBg	: "#FFAEDF",
             colorText: "#ffffff",

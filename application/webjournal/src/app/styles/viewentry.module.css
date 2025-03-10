@@ -134,43 +134,43 @@
 
 .entryName {
     color: white;
-    font-family: var(--font-planetkosmos);
+    font-family: "PlanetKosmos";
     font-size: 60px;
 }
 
 .entryNameview {
     color: #603892;
-    font-family: var(--font-planetkosmos);
+    font-family: "PlanetKosmos";
     font-size: 60px;
 }
 
 
 .entryDate {
     color: white;
-    font-family: var(--font-nullshock); 
+    font-family: "Nullshock"; 
     font-size: 20px;
 }
 
 .entryDateView {
     color: #603892;
-    font-family: var(--font-nullshock); 
+    font-family: "Nullshock"; 
     font-size: 25px;
 }
 
 .entryTextView {
     color: #603892;
-    font-family: var(--font-tahoma); 
+    font-family: "Tahoma"; 
     font-size: 20px;
 }
 
 .trackTitle {
     font-size: 20px;
-    font-family: var(--font-nullshock);
+    font-family: "Nullshock";
     color: #603892;
 }
 
 .trackArtist {
-    font-family: var(--font-ethnocentric);
+    font-family: "Ethnocentric";
     font-size: 15px;
     color: #603892;
 }
@@ -183,7 +183,7 @@
     color: white;
     background-color: #9994D0;
     border-radius: 50px; 
-    font-family: var(--font-nullshock); 
+    font-family: "Nullshock"; 
   }
 
   .button:hover {
@@ -198,7 +198,7 @@
     color: white;
     background-color: #9994D0;
     border-radius: 50px;
-    font-family: var(--font-nullshock);
+    font-family: "Nullshock";
 }
 .deleteButton:hover {
     background-color: #666389;
@@ -217,7 +217,7 @@
 
 .headings {
     margin-bottom: 10px;
-    font-family: var(--font-ethnocentric);
+    font-family: "Ethnocentric";
     margin-left: 10px;
     color: #603892;
     font-size: 2rem;

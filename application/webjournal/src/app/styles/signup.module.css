@@ -22,7 +22,7 @@
 .SignupTitle {
   color: #603892; 
   font-size: 80px;  
-  font-family: var(--font-rangerforce); 
+  font-family: "Rangerforce"; 
   margin-bottom: 5px;  
 }
 
@@ -47,7 +47,7 @@
 .SignupInput p {
     font-size: 36px;
     color: white; 
-    font-family: var(--font-nullshock); 
+    font-family: "Nullshock"; 
     margin-left: 15%;
     margin-right: 5%;  
 }
@@ -70,7 +70,7 @@
   color: white;
   background-color: #9994D0;
   border-radius: 50px; 
-  font-family: var(--font-nullshock); 
+  font-family: "Nullshock"; 
 }
 
 .authInput {

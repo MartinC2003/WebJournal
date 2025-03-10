@@ -124,7 +124,7 @@
   font-size: 2rem;
   color: white; 
   margin: 5%;
-  font-family: var(--font-nullshock); 
+  font-family: "Nullshock"; 
 }
 
 .AboutContent {
@@ -132,7 +132,7 @@
   font-size: 20px;
   margin-left: 5%; 
   margin-right: 5%; 
-  font-family: var(--font-tahoma); 
+  font-family: "Tahoma"; 
 }
 
 .infoButton {
@@ -157,7 +157,7 @@
   color: white;
   background-color: #9994D0;
   border-radius: 50px; 
-  font-family: var(--font-nullshock); 
+  font-family: "Nullshock"; 
 }
 .button {
   padding: 10px 20px; 
@@ -166,7 +166,7 @@
   color: white;
   background-color: #9994D0;
   border-radius: 50px; 
-  font-family: var(--font-nullshock); 
+  font-family: "Nullshock"; 
 }
 
 .button:hover {

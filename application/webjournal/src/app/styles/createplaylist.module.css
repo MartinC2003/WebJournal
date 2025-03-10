@@ -27,7 +27,7 @@
 }
 
 .playlistMessage {
-  font-family: var(--font-planetkosmos);
+  font-family: "PlanetKosmos";
   color: white;
   font-size: 50px;
   margin-top: 20px;
@@ -46,7 +46,7 @@
   width: 100%;
   max-width: 400px;
   margin-top: 5%;
-  font-family: var(--font-tahoma);
+  font-family: "Tahoma";
   color: #603892;
   font-weight: 900;
 }
@@ -72,7 +72,7 @@
 
 .headings,
 .headings2 {
-  font-family: var(--font-ethnocentric);
+  font-family: "Ethnocentric";
   color: #603892;
 }
 
@@ -111,7 +111,7 @@
   color: white;
   background-color: #9994D0;
   border-radius: 50px;
-  font-family: var(--font-nullshock);
+  font-family: "Nullshock";
 }
 
 .buttonsignin {
@@ -134,7 +134,7 @@
   color: white;
   background-color: #9994D0;
   border-radius: 50px; 
-  font-family: var(--font-nullshock); 
+  font-family: "Nullshock"; 
 }
 .createPlaylistButton:hover {
   background-color: #666389;
@@ -201,7 +201,7 @@
 
 /* Mood Selection */
 .chooseMoodTitle {
-  font-family: var(--font-ethnocentric);
+  font-family: "Ethnocentric";
   font-size: 4rem;
   border-bottom: 3px solid white;
   margin-bottom: 10px;
@@ -227,7 +227,7 @@
   padding: 5px;
   margin: 5px;
   margin-top: 2%;
-  font-family: var(--font-tahoma);
+  font-family: "Tahoma";
 }
 
 /* Select Inputs */
@@ -254,7 +254,7 @@
   margin-bottom: 10px;
   border-radius: 50px;
   color: black;
-  font-family: var(--font-tahoma);
+  font-family: "Tahoma";
 }
 
 .selectTitle {
@@ -296,11 +296,11 @@
 }
 .trackTitle {
   font-size: 2rem;
-  font-family: var(--font-nullshock);
+  font-family: "Nullshock";
   color: #603892;
 }
 .trackArtist {
-  font-family: var(--font-ethnocentric);
+  font-family: "Ethnocentric";
   color: #603892;
 }
 
@@ -309,7 +309,7 @@
 }
 
 .playlistTitle {
-  font-family: var(--font-ethnocentric);
+  font-family: "Ethnocentric";
   font-size: 4rem;
   color: #603892;
 }
@@ -324,7 +324,7 @@
 }
 
 .playlistDescription {
-  font-family: var(--font-tahoma);
+  font-family: "Tahoma";
   color: #603892;
   font-size: 27px;
   font-weight: 900;

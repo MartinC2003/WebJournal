@@ -25,8 +25,8 @@ export default function SignUp(){
                         </div>
                         <div className={styles.imageContainer}>
                             <Image 
-                            src='/login/SIGNUPimg-plc.png' 
-                            alt="Log in image" 
+                            src='/login/signupimg-plc.png' 
+                            alt="Sign up image" 
                             className={styles.image} 
                             width={415} 
                             height={835}

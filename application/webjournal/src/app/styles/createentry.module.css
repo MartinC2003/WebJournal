@@ -92,7 +92,7 @@
 
 .headings {
     margin-bottom: 10px;
-    font-family: var(--font-ethnocentric);
+    font-family: "Ethnocentric";
     margin-left: 10px;
     color: #603892;
     font-size: 2rem;
@@ -100,7 +100,7 @@
 
 .headings2 {
     margin-bottom: 10px;
-    font-family: var(--font-tahoma); 
+    font-family: "Tahoma"; 
     color: #603892;
     font-size: 27px;
     font-weight: 900;
@@ -109,7 +109,7 @@
 
 .headings3 {
     margin-bottom: 10px;
-    font-family: var(--font-ethnocentric);
+    font-family: "Ethnocentric";
     color: #603892;
     font-size: 20px;
 }
@@ -144,7 +144,7 @@
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 50px; 
-    font-family: var(--font-tahoma); 
+    font-family: "Tahoma"; 
 }
 
 .textarea {
@@ -163,7 +163,7 @@
     color: white;
     background-color: #8B62AA;
     border-radius: 50px; 
-    font-family: var(--font-nullshock); 
+    font-family: "Nullshock"; 
 }
 .buttonsubmit {
     padding: 10px 20px; 
@@ -173,7 +173,7 @@
     color: white;
     background-color: #9994D0;
     border-radius: 50px; 
-    font-family: var(--font-nullshock); 
+    font-family: "Nullshock"; 
 }
 
 .button:hover {

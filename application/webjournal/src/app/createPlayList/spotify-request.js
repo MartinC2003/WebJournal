@@ -8,7 +8,7 @@ function SpotifyRequest() {
     const handleSpotifySignin = async () => {
         try {
             //http://localhost:8080/ use locally 
-            router.push("https://web-journal-six.vercel/login"); 
+            router.push("/api/login"); 
         } catch (error) {
             console.error("Login failed", error);
             window.alert(`Login failed: ${error.message}`);

@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  font-family: var(--font-ethnocentric); 
+  font-family: "Ethnocentric"; 
   color: #603892;
 }
 
@@ -21,7 +21,7 @@
 .title {
   font-size: 5.5rem;  
   margin-left: 10px;
-  font-family: var(--font-planetkosmos);
+  font-family: "PlanetKosmos";
 }
 
 .logo {
