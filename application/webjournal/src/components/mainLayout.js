@@ -68,7 +68,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${inter.variable} ${PlanetKosmos.variable} ${Ethnocentric.variable} ${Tahoma.variable} ${Nullshock.variable} ${Rangerforce.variable} font-sans`}>
       <head>
         <link rel="stylesheet" href={inter.href} />
-        <style>{`${Tahoma.css} ${Nullshock.css} ${Rangerforce.css}`}</style> {/* Include font CSS */}
+        <style>{`${Tahoma.css} ${Nullshock.css} ${Rangerforce.css}`}</style>  
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
       </head>

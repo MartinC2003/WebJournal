@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const SelectedEntryContext = React.createContext();
 
@@ -23,6 +23,15 @@ export const SelectedEntryProvider = ({ children }) => {
       console.error("Error setting entry:", error);
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedEntry = window.localStorage.getItem("entry-id");
+      if (storedEntry) {
+        setSelectedEntryId(storedEntry);
+      }
+    }
+  }, []);  
 
   return (
     <SelectedEntryContext.Provider value={{ selectedEntryId, setEntry, removeEntry }}>
