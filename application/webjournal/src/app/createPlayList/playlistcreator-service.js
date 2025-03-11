@@ -114,7 +114,7 @@ function PlaylistCreatorService() {
         if (processed.has(trackKey)) continue;
         processed.add(trackKey);
   
-        let similarTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=track.getSimilar&track=${encodeURIComponent(song)}&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&autocorrect=1&limit=10`;
+        let similarTracksUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getSimilar&track=${encodeURIComponent(song)}&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&autocorrect=1&limit=10`;
   
         console.log(`Fetching similar tracks for: ${artist} - ${song}`);
   
@@ -125,13 +125,13 @@ function PlaylistCreatorService() {
           if (similarTracks.length === 0) {
             console.log(`No similar tracks found, fetching similar artists for: ${artist}`);
   
-            const similarArtistsUrl = `http://ws.audioscrobbler.com/2.0/?method=artist.getSimilar&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&limit=5`;
+            const similarArtistsUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.getSimilar&artist=${encodeURIComponent(artist)}&api_key=${lastfm_key}&format=json&limit=5`;
             const artistsResponse = await axios.get(similarArtistsUrl);
             const similarArtists = artistsResponse.data.similarartists?.artist || [];
   
             for (const similarArtist of similarArtists) {
               const artistName = similarArtist.name;
-              const topTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=artist.getTopTracks&artist=${encodeURIComponent(artistName)}&api_key=${lastfm_key}&format=json&limit=5`;
+              const topTracksUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.getTopTracks&artist=${encodeURIComponent(artistName)}&api_key=${lastfm_key}&format=json&limit=5`;
   
               try {
                 const topTracksResponse = await axios.get(topTracksUrl);
@@ -178,7 +178,7 @@ function PlaylistCreatorService() {
         for (const { artist, song } of tempTracks) {
           if (recommendedTracks.size >= 200) break;
   
-          const albumsUrl = `http://ws.audioscrobbler.com/2.0/?method=album.search&album=${encodeURIComponent(song)}&api_key=${lastfm_key}&format=json&limit=5`;
+          const albumsUrl = `https://ws.audioscrobbler.com/2.0/?method=album.search&album=${encodeURIComponent(song)}&api_key=${lastfm_key}&format=json&limit=5`;
   
           try {
             const albumsResponse = await axios.get(albumsUrl);
@@ -187,7 +187,7 @@ function PlaylistCreatorService() {
             for (const album of albums) {
               console.log(`Fetching tracks from album: ${album.name} by ${album.artist}`);
   
-              const albumTracksUrl = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=${encodeURIComponent(album.artist)}&album=${encodeURIComponent(album.name)}&api_key=${lastfm_key}&format=json`;
+              const albumTracksUrl = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=${encodeURIComponent(album.artist)}&album=${encodeURIComponent(album.name)}&api_key=${lastfm_key}&format=json`;
               try {
                 const albumTracksResponse = await axios.get(albumTracksUrl);
                 const albumTracks = albumTracksResponse.data.album?.tracks?.track || [];

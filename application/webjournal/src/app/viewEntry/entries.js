@@ -1,13 +1,24 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from '../styles/viewentry.module.css';
+import { useSelectedEntry } from './context/EntryContext';
 
 function Entries({entries }) {
   const router = useRouter();
+  const { setEntry } = useSelectedEntry(); 
 
-  const handleViewMore = (id) => {
-    router.push(`/viewEntry/${id}`);
+  const handleViewMore = async (id) => {
+    try {
+      console.log('Setting Entry ID:', id);  
+      await setEntry(id);  
+      setTimeout(() => {
+        router.push('/viewEntry/entry');
+      }, 100); 
+    } catch (error) {
+      console.error('Error setting entry:', error);
+    }
   };
+
 
   const formatDate = (dateString) => {
     if (!dateString) return '';

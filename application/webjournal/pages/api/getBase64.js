@@ -10,9 +10,10 @@ export default function handler(req, res) {
 
   try {
     const filePath = path.join(process.cwd(), "public", imagePath);
-    const fileStats = fs.statSync(filePath);  // Get file stats to check size
+    const fileStats = fs.statSync(filePath);  
+    console.log("File path:", filePath);  
 
-    // Check if the file exceeds 256 KB (262144 bytes)
+
     if (fileStats.size > 262144) {
       return res.status(400).json({ error: "Image exceeds the 256 KB size limit" });
     }

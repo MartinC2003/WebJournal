@@ -2,13 +2,14 @@
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import Image from "next/image";
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { db } from '../../../api/firebase';
 import styles from '../../styles/viewentry.module.css';
+import { useSelectedEntry } from '../context/EntryContext';
 
-const ViewEntry = () => {
-  const { id } = useParams();
+const Entry = () => {
+  const { selectedEntryId, removeEntry } = useSelectedEntry();
   const router = useRouter();
   const [entry, setEntry] = useState(null);
   const [mood, setMood] = useState("Happy");
@@ -37,12 +38,13 @@ const ViewEntry = () => {
   };
 
   useEffect(() => {
+    console.log('Retrieved Entry ID from Context:', selectedEntryId);
     const fetchEntry = async () => {
-      if (id) {
-        console.log('Fetching entry with ID:', id);
-        const entryRef = doc(db, 'DairyEntries', id);
+      if (selectedEntryId) {
+        console.log('Fetching entry with ID:', selectedEntryId);
+        const entryRef = doc(db, 'DairyEntries', selectedEntryId);
         const entrySnapshot = await getDoc(entryRef);
-
+  
         if (entrySnapshot.exists()) {
           const entryData = entrySnapshot.data();
           setEntry({ id: entrySnapshot.id, ...entryData });
@@ -53,10 +55,15 @@ const ViewEntry = () => {
         }
       }
     };
-
+  
     fetchEntry();
-  }, [id]);
+  }, [selectedEntryId]);   
+  
 
+  const handleBack = async () => {
+    await removeEntry();
+    router.push('/viewEntry');
+  }
   const handleDeleteEntry = async () => {
     if (!id) return;
     const confirmDelete = window.confirm("Are you sure you want to delete this entry?");
@@ -81,6 +88,9 @@ const ViewEntry = () => {
     transition={{ duration: 1 }}
     >
       <div className={styles.pagecontentContainer}>
+        <button onClick={handleBack} className={styles.backButton}>
+            ← Back
+        </button>
           <div className={styles.viewEntryContentContainer}>
             <div className={styles.moodImageContainer}>
               <Image
@@ -136,4 +146,4 @@ const ViewEntry = () => {
   );
 };
 
-export default ViewEntry;
+export default Entry;

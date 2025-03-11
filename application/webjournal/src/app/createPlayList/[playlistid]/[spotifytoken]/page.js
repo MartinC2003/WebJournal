@@ -9,6 +9,7 @@ import SpotifyIcon from '../../../../../public/icons/SpotifyIcon.svg';
 import styles from '../../../styles/createplaylist.module.css';
 
 
+
 const ViewPlaylist = () => {
   const params = useParams(); 
   const playlistid = params?.playlistid;
