@@ -1,53 +1,44 @@
-'use client';
-
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import SpotifyIcon from '../../../../../public/icons/SpotifyIcon.svg';
-import styles from '../../../styles/createplaylist.module.css';
-
-
-
-const ViewPlaylist = () => {
-  const params = useParams(); 
-  const playlistid = params?.playlistid;
-  const spotifytoken = params?.spotifytoken;
-  const router = useRouter();
-
+import SpotifyIcon from '../../../public/icons/SpotifyIcon.svg';
+import styles from '../styles/createplaylist.module.css';
+const ViewPlaylist = ({ playlistId, spotifyToken, setPlaylistId }) => {
   const [playlist, setPlaylist] = useState(null);
   const [tracks, setTracks] = useState([]);
-  const [playlistImage, setPlaylistImage] = useState('');
+  const [playlistImage, setPlaylistImage] = useState("");
+
 
   useEffect(() => {
-    if (!playlistid || !spotifytoken) {
+    if (!playlistId || !spotifyToken) {
       console.warn("Missing playlist ID or Spotify token.");
       return;
     }
 
-    console.log('Fetching playlist data for playlistId:', playlistid);
+    console.log('Fetching playlist data for playlistId:', playlistId);
 
 
     const fetchPlaylistData = async () => {
       try {
-        const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistid}`;
+        const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}`;
         console.log('Fetching playlist details from Spotify API...');
         const playlistResponse = await axios.get(playlistUrl, {
           headers: {
-            Authorization: `Bearer ${spotifytoken}`,
+            Authorization: `Bearer ${spotifyToken}`,
             'Content-Type': 'application/json',
           },
         });
 
+        console.log(playlistResponse.data); 
         setPlaylist(playlistResponse.data);
         setPlaylistImage(playlistResponse.data.images?.[0]?.url || '');
 
-        const tracksUrl = `https://api.spotify.com/v1/playlists/${playlistid}/tracks?limit=5`;
+        const tracksUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=5`;
         console.log('Fetching playlist tracks from Spotify API...');
         const tracksResponse = await axios.get(tracksUrl, {
           headers: {
-            Authorization: `Bearer ${spotifytoken}`,
+            Authorization: `Bearer ${spotifyToken}`,
             'Content-Type': 'application/json',
           },
         });
@@ -59,12 +50,12 @@ const ViewPlaylist = () => {
     };
 
     fetchPlaylistData();
-  }, [playlistid, spotifytoken]);
+  }, [playlistId, spotifyToken]);
 
   if (!playlist) return <div>Loading...</div>;
 
   const handlecreatePlayList = () => {
-    router.push('/createPlayList');  
+    setPlaylistId(null);  
   };
 
   return (

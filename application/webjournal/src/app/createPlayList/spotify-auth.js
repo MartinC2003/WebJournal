@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import styles from "../styles/createplaylist.module.css";
 import PlaylistCreatorService from "./playlistcreator-service";
 
-function SpotifyAuth({ spotifyToken, refreshSpotifyToken }) {
+function SpotifyAuth({ spotifyToken, refreshSpotifyToken, userUid, setPlaylistId }) {
   const [userProfile, setUserProfile] = useState(null);
   const [userProfileId, setUserProfileId] = useState(null);
   const { fetchSpotifyUserProfile, createPlaylist, } = PlaylistCreatorService(spotifyToken);
@@ -72,6 +72,8 @@ function SpotifyAuth({ spotifyToken, refreshSpotifyToken }) {
     console.log("Spotify Token inside handleCreatePlaylist:", spotifyToken);
     console.log("Selected Mood:", mood);
     console.log("Playlist image", playListImage)
+    console.log("Selected Month:", month);  
+    console.log("Selected Year:", year);  
     if (!userProfile) {
       return;
     }
@@ -85,15 +87,23 @@ function SpotifyAuth({ spotifyToken, refreshSpotifyToken }) {
         playlistDescription: moodDescriptions[mood],
         userProfileId,
         playListImage,  
+        userUid
       });
   
+      setPlaylistId(playlistId);
+
       console.log(`Playlist created successfully! Playlist ID: ${playlistId}`)
+      console.log("Spotify Token:", spotifyToken);  // Log the Spotify token
+      console.log("Playlist ID:", playlistId);  // Log the Playlist ID
+      
     } catch (error) {
       console.error("Error creating playlist:", error);
     } finally {
       setLoading(false);
     }
   };
+
+
   return (
     <div className={styles.app}>
       <div className={styles.pagecontentContainer}>
@@ -164,7 +174,7 @@ function SpotifyAuth({ spotifyToken, refreshSpotifyToken }) {
             </div>
             <h1 className={styles.selectTitle}>Date in range</h1>
             <div className={styles.selectContainer2}>
-              <select
+            <select
                 className={styles.selectInput}
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
@@ -205,6 +215,7 @@ function SpotifyAuth({ spotifyToken, refreshSpotifyToken }) {
       </div>
     </div>
   );
+
 }
 
 export default SpotifyAuth;

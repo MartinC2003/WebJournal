@@ -1,11 +1,9 @@
 import { db } from "@/api/firebase";
 import axios from "axios";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { useRouter } from "next/navigation";
 
 function PlaylistCreatorService() {
   const lastfm_key = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
-  const router = useRouter();
 
   // Fetches user data from Spotify using the provided token.
   const fetchSpotifyUserProfile = async (spotifyToken) => {
@@ -52,14 +50,14 @@ function PlaylistCreatorService() {
   // Retrieves diary entries from Firestore within the given time range and mood,
   // then extracts the track information (artist and song).
   //Works 
-  async function getTracks(user, month, year, mood) {
+  async function getTracks( month, year, mood, userUid,) {
     const { startDate, endDate } = getTimeRange(month, year);
     console.log("getTracks: Querying entries between", startDate, "and", endDate, "with mood:", mood);
     
     const diaryEntries = [];
     try {
       const diaryQuery = query(
-        collection(db, "users", userUid, "DairyEntries"),  
+        collection(db, "users", userUid, "DairyEntries"),
         where("date", ">=", startDate),
         where("date", "<=", endDate),
         where("mood", "==", mood)
@@ -300,12 +298,6 @@ async function uploadPlaylistImage(playlistId, spotifyToken, playListImage) {
     });
 }
 
-const sendtoPlaylist = (playlistId, spotifyToken) => {
-  const playlistid = playlistId;
-  const spotifytoken = spotifyToken;
-  
-  //router.push(`/createPlayList/${playlistid}/${spotifytoken}`);
-}
 
 async function createPlaylist({
   selectedDateRange,
@@ -314,6 +306,7 @@ async function createPlaylist({
   userProfileId,
   playListImage,
   playlistDescription,
+  userUid
 }) {
   try {
     console.log("Spotify User ID:", userProfileId);
@@ -321,7 +314,7 @@ async function createPlaylist({
     console.log("Playlist Image:", playListImage);
 
     // Retrieve diary tracks from Firestore
-    const diaryTracks = await getTracks(selectedDateRange.month, selectedDateRange.year, selectedMood);
+    const diaryTracks = await getTracks(selectedDateRange.month, selectedDateRange.year, selectedMood, userUid);
     console.log("Diary tracks retrieved:", diaryTracks);
 
     // Get similar tracks from Last.fm
@@ -379,8 +372,6 @@ async function createPlaylist({
     });
 
     console.log("Tracks added to playlist successfully.");
-    sendtoPlaylist(playlistId, spotifyToken); 
-
 
     return playlistId;
 
@@ -399,7 +390,6 @@ async function createPlaylist({
     getTracks,
     searchTracks,
     getSimilarTracks,
-    sendtoPlaylist,
     createPlaylist,
   };
 }

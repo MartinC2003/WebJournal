@@ -3,9 +3,9 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { motion } from 'framer-motion';
 import { useEffect, useState } from "react";
+import ViewPlaylist from "./playlist";
 import SpotifyAuth from "./spotify-auth";
 import SpotifyRequest from "./spotify-request";
-
 
 function CreatePlaylistHome() {
   const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
@@ -13,6 +13,8 @@ function CreatePlaylistHome() {
   const [refreshToken, setRefreshToken] = useState(null);
   const [expiresIn, setExpiresIn] = useState(null); 
   const [refreshTimeout, setRefreshTimeout] = useState(null); 
+  const [playlistId, setPlaylistId] = useState(null); // Store the created playlist ID
+  const [userUid, setUserUid] = useState(null);
   //use context hook on all of these for the spotify token and the playlist id 
   //or just useffect where created playlist is selected and the playlist page is displayed
 
@@ -85,6 +87,8 @@ function CreatePlaylistHome() {
             setSpotifyToken(data.spotifyAccessToken);
             setRefreshToken(data.spotifyRefreshToken);
             setExpiresIn(data.expiresIn); 
+            setUserUid(currentUser.uid);  
+
           } else {
             setSpotifyAuthenticated(false);
           }
@@ -100,22 +104,30 @@ function CreatePlaylistHome() {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}  
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      transition={{ duration: 1 }}
     >
-      {spotifyAuthenticated ? (
+      {spotifyAuthenticated && playlistId ? (
+        <ViewPlaylist 
+          playlistId={playlistId} 
+          spotifyToken={spotifyToken} 
+          setPlaylistId={setPlaylistId} 
+        />
+      ) : spotifyAuthenticated ? (
         <SpotifyAuth 
           spotifyToken={spotifyToken} 
           refreshToken={refreshToken} 
-          refreshSpotifyToken={refreshSpotifyToken}  
+          userUid={userUid}
+          refreshSpotifyToken={refreshSpotifyToken} 
+          setPlaylistId={setPlaylistId} 
         />
       ) : (
         <SpotifyRequest />
       )}
     </motion.div>
-  )
+  );
 }
 
 export default CreatePlaylistHome;
