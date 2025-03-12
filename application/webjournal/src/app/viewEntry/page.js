@@ -11,7 +11,7 @@ import Entries from './entries';
 
 const ViewEntryPage = () => {
   const { user } = UserAuth();
-
+  const [userUid, setUserUid] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));  
   const [selectedDates, setSelectedDates] = useState([]);
@@ -19,8 +19,13 @@ const ViewEntryPage = () => {
   const [mode, setMode] = useState('date');
 
   useEffect(() => {
+    if (user) {
+      setUserUid(user.uid);
+    }
+  }, [user]);
+  
+  useEffect(() => {
     if (!user) return;
-
     console.log("Fetching entries - Mode:", mode);
     console.log("Selected Date:", selectedDate);
     console.log("Selected Month:", selectedMonth);
@@ -30,7 +35,7 @@ const ViewEntryPage = () => {
 
       if (mode === 'date') {
         console.log("Fetching entries for date:", selectedDate);
-        const selectedDateRef = collection(db, "DairyEntries");
+        const selectedDateRef = collection(db, "users", userUid, "DairyEntries");
         const querySnapshot = await getDocs(selectedDateRef);
         entriesToFetch = querySnapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
@@ -41,7 +46,7 @@ const ViewEntryPage = () => {
         console.log("Month Start Date:", startDate);
         console.log("Month End Date:", endDate);
 
-        const dairyEntriesRef = collection(db, "DairyEntries");
+        const dairyEntriesRef = collection(db, "users", userUid, "DairyEntries");
         const q = query(
           dairyEntriesRef,
           where("date", ">=", startDate),
@@ -86,7 +91,7 @@ const ViewEntryPage = () => {
   
     const parsedDate = new Date(date);
     const year = parsedDate.getFullYear();
-    const month = String(parsedDate.getMonth() + 1).padStart(2, "0"); // Ensure two-digit format
+    const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
     const formattedMonth = `${year}-${month}`;
   
     console.log("Updated Selected Month:", formattedMonth);

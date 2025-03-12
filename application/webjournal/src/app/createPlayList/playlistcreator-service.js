@@ -52,14 +52,14 @@ function PlaylistCreatorService() {
   // Retrieves diary entries from Firestore within the given time range and mood,
   // then extracts the track information (artist and song).
   //Works 
-  async function getTracks(month, year, mood) {
+  async function getTracks(user, month, year, mood) {
     const { startDate, endDate } = getTimeRange(month, year);
     console.log("getTracks: Querying entries between", startDate, "and", endDate, "with mood:", mood);
     
     const diaryEntries = [];
     try {
       const diaryQuery = query(
-        collection(db, "DairyEntries"),  
+        collection(db, "users", userUid, "DairyEntries"),  
         where("date", ">=", startDate),
         where("date", "<=", endDate),
         where("mood", "==", mood)
@@ -304,7 +304,7 @@ const sendtoPlaylist = (playlistId, spotifyToken) => {
   const playlistid = playlistId;
   const spotifytoken = spotifyToken;
   
-  router.push(`/createPlayList/${playlistid}/${spotifytoken}`);
+  //router.push(`/createPlayList/${playlistid}/${spotifytoken}`);
 }
 
 async function createPlaylist({
@@ -358,6 +358,7 @@ async function createPlaylist({
 
     const playlistData = createPlaylistResponse.data;
     const playlistId = playlistData.id;
+
     console.log(`Created playlist with ID: ${playlistId}`);
 
     await uploadPlaylistImage(playlistId, spotifyToken, playListImage);

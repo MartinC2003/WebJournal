@@ -1,9 +1,9 @@
+import { UserAuth } from '@/api/AuthContext';
 import { db } from '@/api/firebase';
 import { Badge, Calendar, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-
 
 function getTimeRange(month, year) {
   const monthNames = [
@@ -25,11 +25,11 @@ function getTimeRange(month, year) {
   };
 }
 
-const fetchEntriesForMonth = async (month, year, setMarkedDates) => {
+const fetchEntriesForMonth = async (month, year, userUid, setMarkedDates) => {
   const { startDate, endDate } = getTimeRange(month, year);
 
   try {
-    const dairyEntriesRef = collection(db, "DairyEntries");
+    const dairyEntriesRef = collection(db, "users", userUid, "DairyEntries");
     const q = query(
       dairyEntriesRef,
       where("date", ">=", startDate),
@@ -42,7 +42,7 @@ const fetchEntriesForMonth = async (month, year, setMarkedDates) => {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const date = data.date;
-      const entryTitle = data.title || "Untitled Entry"; // Ensure title exists
+      const entryTitle = data.title || "Untitled Entry";  
 
       if (!entriesMap[date]) {
         entriesMap[date] = [];
@@ -59,12 +59,12 @@ const fetchEntriesForMonth = async (month, year, setMarkedDates) => {
   }
 };
 
-const fetchEntriesForYear = async (year, setMarkedMonths) => {
+const fetchEntriesForYear = async (year, userUid, setMarkedMonths) => {
   const startDate = new Date(year, 0, 1); 
   const endDate = new Date(year, 11, 31); 
 
   try {
-    const dairyEntriesRef = collection(db, "DairyEntries");
+    const dairyEntriesRef = collection(db, "users", userUid, "DairyEntries");
     const q = query(
       dairyEntriesRef,
       where("date", ">=", startDate.toISOString().slice(0, 10)),
@@ -89,15 +89,24 @@ const fetchEntriesForYear = async (year, setMarkedMonths) => {
 const BasicDateCalendar = ({ onDateSelect, selectedDate, markedDates, setMode  }) => {
   const [markedDatesLocal, setMarkedDates] = useState(markedDates || []); 
   const [markedMonths, setMarkedMonths] = useState([]); 
-
+  const { user } = UserAuth();
+  const [userUid, setUserUid] = useState(null);
+  
   useEffect(() => {
-    if (!selectedDate) return;
+    if (user) {
+      setUserUid(user.uid);
+    }
+  }, [user]);
+  
+  useEffect(() => {
+    if (!selectedDate) return; 
+    console.log("Selected Date in Calendar:", selectedDate);
     const selectedDayjs = dayjs(selectedDate);
     const month = selectedDayjs.format('MMMM');
     const year = selectedDayjs.year();
 
-    fetchEntriesForMonth(month, year, setMarkedDates);
-    fetchEntriesForYear(year, setMarkedMonths);
+    fetchEntriesForMonth(month, year, userUid, setMarkedDates);
+    fetchEntriesForYear(year, userUid, setMarkedMonths);
   }, [selectedDate]);
 
   const onPanelChangeHandler = (value, ) => {

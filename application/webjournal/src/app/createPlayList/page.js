@@ -13,7 +13,6 @@ function CreatePlaylistHome() {
   const [refreshToken, setRefreshToken] = useState(null);
   const [expiresIn, setExpiresIn] = useState(null); 
   const [refreshTimeout, setRefreshTimeout] = useState(null); 
-
   //use context hook on all of these for the spotify token and the playlist id 
   //or just useffect where created playlist is selected and the playlist page is displayed
 

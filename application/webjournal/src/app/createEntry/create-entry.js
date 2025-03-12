@@ -1,10 +1,10 @@
+import { db } from '@/api/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import CeIcon from '../../../public/icons/CeIcon.svg';
 import { UserAuth } from '../../api/AuthContext';
-import { db } from '../../api/firebase';
 import styles from '../styles/createentry.module.css';
 
 function NewEntry() {
@@ -48,42 +48,47 @@ function NewEntry() {
 
   const addEntry = async (e) => {
     e.preventDefault();
-
-    if (entry.title !== '' && entry.mood !== '' && entry.text !== '') {
-      const allTracksFilled = entry.tracks.every(track => track.artist !== '' && track.trackTitle !== '');
-
+  
+    if (entry.title !== "" && entry.mood !== "" && entry.text !== "") {
+      const allTracksFilled = entry.tracks.every(track => track.artist !== "" && track.trackTitle !== "");
+  
       if (allTracksFilled) {
         try {
-          await addDoc(collection(db, 'DairyEntries'), {
+          if (!user?.uid) {
+            throw new Error("User is not authenticated.");
+          }
+  
+          const userEntriesRef = collection(db, "users", user.uid, "DairyEntries");
+          await addDoc(userEntriesRef, {
             date: entry.date,
             title: entry.title.trim(),
             mood: entry.mood.trim(),
             text: entry.text.trim(),
-            userUid: user.uid,
             tracks: entry.tracks,
           });
-
+  
           setEntry({
-            date: '',
-            title: '',
-            mood: '',
-            text: '',
-            tracks: [{ artist: '', trackTitle: '' }]
+            date: "",
+            title: "",
+            mood: "",
+            text: "",
+            tracks: [{ artist: "", trackTitle: "" }],
           });
-
-          console.log('Entry successfully saved to Firestore!');
-          router.push('/viewEntry');
+  
+          console.log("Entry successfully saved to Firestore!");
+          router.push("/viewEntry");
         } catch (error) {
-          console.error('Error adding entry:', error);
+          console.error("Error adding entry:", error);
           window.alert(`Error adding entry: ${error.message}`);
         }
       } else {
-        window.alert('Please fill in all track details');
+        window.alert("Please fill in all track details");
       }
     } else {
-      window.alert('Please fill in all fields');
+      window.alert("Please fill in all fields");
     }
   };
+  
 
   
   return (

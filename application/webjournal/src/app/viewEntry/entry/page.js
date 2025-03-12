@@ -1,4 +1,5 @@
 'use client';
+import { UserAuth } from '@/api/AuthContext';
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import Image from "next/image";
@@ -9,7 +10,10 @@ import styles from '../../styles/viewentry.module.css';
 import { useSelectedEntry } from '../context/EntryContext';
 
 const Entry = () => {
+  const {user} = UserAuth();
+  const [userUid, setUserUid] = useState(null);
   const { selectedEntryId, removeEntry } = useSelectedEntry();
+  const [entryId, setEntryId] =useState(null)
   const router = useRouter();
   const [entry, setEntry] = useState(null);
   const [mood, setMood] = useState("Happy");
@@ -38,26 +42,35 @@ const Entry = () => {
   };
 
   useEffect(() => {
-    console.log('Retrieved Entry ID from Context:', selectedEntryId);
-    const fetchEntry = async () => {
-      if (selectedEntryId) {
-        console.log('Fetching entry with ID:', selectedEntryId);
-        const entryRef = doc(db, 'DairyEntries', selectedEntryId);
-        const entrySnapshot = await getDoc(entryRef);
+    if (user) {
+      setUserUid(user.uid);
+      setEntryId(selectedEntryId)
+      console.log('Entry:', selectedEntryId)
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!userUid || !entryId) return; // Ensure both are available
   
-        if (entrySnapshot.exists()) {
-          const entryData = entrySnapshot.data();
-          setEntry({ id: entrySnapshot.id, ...entryData });
-          setMood(entryData.mood);
-          setTracks(entryData.tracks || []);
-        } else {
-          console.error('No such entry!');
-        }
+    console.log('Retrieved Entry ID from Context:', entryId);
+  
+    const fetchEntry = async () => {
+      console.log('Fetching entry with ID:', entryId);
+      const entryRef = doc(db, 'users', userUid, 'DairyEntries', entryId);
+      const entrySnapshot = await getDoc(entryRef);
+  
+      if (entrySnapshot.exists()) {
+        const entryData = entrySnapshot.data();
+        setEntry({ id: entrySnapshot.id, ...entryData });
+        setMood(entryData.mood);
+        setTracks(entryData.tracks || []);
+      } else {
+        console.error('No such entry!');
       }
     };
   
     fetchEntry();
-  }, [selectedEntryId]);   
+  }, [userUid, entryId]); 
   
 
   const handleBack = async () => {
@@ -65,12 +78,13 @@ const Entry = () => {
     router.push('/viewEntry');
   }
   const handleDeleteEntry = async () => {
-    if (!id) return;
+    if (!entryId) return;
     const confirmDelete = window.confirm("Are you sure you want to delete this entry?");
     if (!confirmDelete) return;
 
     try {
-      await deleteDoc(doc(db, 'DairyEntries', id));
+      await deleteDoc(doc(db, 'users', userUid, 'DairyEntries', entryId));
+      await removeEntry();
       console.log("Entry deleted successfully.");
       router.push('/viewEntry');
     } catch (error) {
