@@ -54,10 +54,10 @@ Once the playlist finishes generating, the playlist will be saved in the user's 
 The frontend was designed out in Figma and coded in manually using CSS. The website only has desktop support. 
 
 ### Database: Firebase
-The user’s data is saved in a cloud storage service hosted by[Firebase](https://firebase.google.com/docs?gclsrc=aw.ds&gad_source=1&gad_campaignid=12301997661&gbraid=0AAAAADpUDOh01GOqIxN8O1Nu8OwVF4yPr&gclid=CjwKCAjw7_DEBhAeEiwAWKiCC8G6DvmHN4kIjBW9d9DOjf49B088Jz_VUVkqOp8IGSpfDw5871MZtxoCDuMQAvD_BwE)  . Firebase handles both user authentication and database management.  
+The user’s data is saved in a cloud storage service hosted by [Firebase](https://firebase.google.com/docs?gclsrc=aw.ds&gad_source=1&gad_campaignid=12301997661&gbraid=0AAAAADpUDOh01GOqIxN8O1Nu8OwVF4yPr&gclid=CjwKCAjw7_DEBhAeEiwAWKiCC8G6DvmHN4kIjBW9d9DOjf49B088Jz_VUVkqOp8IGSpfDw5871MZtxoCDuMQAvD_BwE)  . Firebase handles both user authentication and database management.  
 
 ### Backend: Express.js
-Express.js is used to send requests to third-party APIs . The API components used in this application are the [Spotify Web API](https://developer.spotify.com/documentation/web-api) and the [Last.fm API](https://www.last.fm/api). When a user generates a playlist, the app queries Firebase to retrieve song data. That data is then passed to Last.fm, which returns recommended tracks based on the retrieved songs. A request is then made to Spotify to create a playlist based on the acquired data. 
+Express.js is used to send requests to third-party APIs. The API components used in this application are the [Spotify Web API](https://developer.spotify.com/documentation/web-api) and the [Last.fm API](https://www.last.fm/api). When a user generates a playlist, the app queries Firebase to retrieve song data. That data is then passed to Last.fm, which returns recommended tracks based on the retrieved songs. A request is then made to Spotify to create a playlist based on the acquired data. 
 
 ### Hosting: Vercel 
 The website is hosted on [Vercel](https://vercel.com/docs). Musicjournal is deployed as a monorepo, with both the frontend and backend contained within the same repository. The "vercel.json" file defines the build configuration for the application during deployment.
