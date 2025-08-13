@@ -158,6 +158,9 @@ The generated playlist would have a custom album cover upon its creation. This f
 #### Refresh token function not working 
 The refresh token would expire when its not supposed to. 
 
+#### Corrupted Text
+Generated album description shouldn't have any syntax errors when created. 
+
 ### Future implementations
 - Replacing placeholder images and texts with assests of my own
 - Importing a frontend library to fix the CSS
