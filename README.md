@@ -1,12 +1,13 @@
 # Musicjournal
 
-- [Project Summary](#💻project-summary)  
-- [Tech Stack](#tech-stack)  
-- [Running Locally](#running-locally)  
-- [Bugs and Errors](#bugs-and-errors)  
-- [Credits](#credits)  
+- 📄 [Project Summary](#project-summary)  
+- 🛠️ [Tech Stack](#tech-stack)  
+- 💻 [Running Locally](#running-locally)  
+- 🐞 [Bugs and Errors](#bugs-and-errors)  
+- 🎨 [Credits](#credits)  
 
-## 📄 Project Summary 
+
+## Project Summary 
 
 Musicjournal acts as a digital journal that helps users process their emotions and thoughts. Whenever a user creates an entry, they select a mood and song that reflects their current emotions. The user can sign into their Spotify account and have a playlist generated based on a specific mood. 
 
@@ -47,7 +48,7 @@ Select the mood you want the playlist to be based on. Then choose a month and ye
 
 Once the playlist finishes generating, the playlist will be saved in the user's account. **Please note that all generated playlists are public upon creation**.
 
-## 🛠️ Tech Stack 
+## Tech Stack 
 
 ### Frontend: Next.js, Javascript
 The frontend was designed out in Figma and coded in manually using CSS. The website only has desktop support. 
@@ -61,7 +62,7 @@ Express.js is used to send requests to third-party APIs . The API components use
 ### Hosting: Vercel 
 The website is hosted on [Vercel](https://vercel.com/docs). Musicjournal is deployed as a monorepo, with both the frontend and backend contained within the same repository. The "vercel.json" file defines the build configuration for the application during deployment.
 
-## 💻 Running Locally
+## Running Locally
 
 ### Download Dependencies 
 Clone the repository and navigate to the project folder. The repo will have two folders which contain the frontend and backend project. You would need to install dependencies for both folders separately. 
@@ -147,7 +148,7 @@ Backend:
 cd WebJournal/application/server
 npm start
 ```
-## 🐞 Bugs and Errors
+## Bugs and Errors
 
 ### 2025-08-12 
 
@@ -165,7 +166,7 @@ The refresh token would expire when its not supposed to.
 - Speeding up the generator
 - Implementing more exception handling 
 
-## 🎨 Credits
+## Credits
 
 ### Creator Links
 - [Link Tree](https://linktr.ee/marty.03)  
