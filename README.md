@@ -1,6 +1,6 @@
 # Musicjournal
 
-- [Project Summary](#project-summary)  
+- [Project Summary](#💻project-summary)  
 - [Tech Stack](#tech-stack)  
 - [Running Locally](#running-locally)  
 - [Bugs and Errors](#bugs-and-errors)  
