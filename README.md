@@ -13,7 +13,7 @@ Musicjournal acts as a digital journal that helps users process their emotions a
 Please note this is only a beta build. All images are placeholders and will be updated in the future. 
 
 ### Demo
-      (Demo here) 
+[      (Demo here) ](https://github.com/user-attachments/assets/50906076-add4-47d3-a9b2-eb7850391c1e)
 
 
 
@@ -98,7 +98,7 @@ In the file "page.js" and "spotify-request.js" replace the current API calls wit
     });
 ```
 
-Navigate to the ==server folder==
+Navigate to the "server folder"
 ```bash
 cd WebJournal\application\server
 ```
